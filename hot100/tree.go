@@ -94,6 +94,30 @@ func isMirror(left *TreeNode, right *TreeNode) bool {
 	return left.Val == right.Val && isMirror(left.Left, right.Right) && isMirror(left.Right, right.Left)
 }
 
+// 108. 将有序数组转换为二叉搜索树
+func sortedArrayToBST(nums []int) *TreeNode {
+	if len(nums) == 0 {
+		return nil
+	}
+	mid := len(nums) / 2
+	root := &TreeNode{Val: nums[mid]}
+	root.Left = sortedArrayToBST(nums[:mid])
+	root.Right = sortedArrayToBST(nums[mid+1:])
+	return root
+}
+
+func isValid(root *TreeNode, res []int) {
+
+}
+
+// 98. 验证二叉搜索树  中序便利，判断是否单调递增
+func isValidBST(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+
+}
+
 // 后序遍历，先序遍历反转
 func postorderTraversal(root *TreeNode) []int {
 	stack := make([]*TreeNode, 0)
