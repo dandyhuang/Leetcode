@@ -35,6 +35,17 @@ func reverseList(head *ListNode) *ListNode {
 	return pre
 }
 
+// 206. 反转链表 递归
+func reverseListRecursion(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	newHead := reverseListRecursion(head.Next)
+	head.Next.Next = head
+	head.Next = nil
+	return newHead
+}
+
 // 234. 回文链表
 func isPalindrome(head *ListNode) bool {
 	var values []int
@@ -176,6 +187,17 @@ func swapPairs(head *ListNode) *ListNode {
 		p.Next = q
 	}
 	return dummy.Next
+}
+
+// 24. 两两交换链表中的节点 递归
+func swapPairsRecursion(head *ListNode) *ListNode {
+	if head == nil && head.Next == nil {
+		return head
+	}
+	next := head.Next
+	head.Next = swapPairsRecursion(next.Next)
+	next.Next = head
+	return next
 }
 
 // 25. K 个一组翻转链表
