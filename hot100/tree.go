@@ -1,5 +1,7 @@
 package leetcode_hot100
 
+import "math"
+
 type TreeNode struct {
 	Left  *TreeNode
 	Right *TreeNode
@@ -106,16 +108,67 @@ func sortedArrayToBST(nums []int) *TreeNode {
 	return root
 }
 
-func isValid(root *TreeNode, res []int) {
-
-}
-
 // 98. 验证二叉搜索树  中序便利，判断是否单调递增
 func isValidBST(root *TreeNode) bool {
-	if root == nil {
-		return true
+	// 第一次第一个节点比较
+	pre := math.MinInt
+	var dfs func(node *TreeNode) bool
+	dfs = func(node *TreeNode) bool {
+		if node == nil {
+			return true
+		}
+		if !dfs(node.Left) {
+			return false
+		}
+		if node.Val <= pre {
+			return false
+		}
+		// 记录上一个节点
+		pre = node.Val
+		return dfs(node.Right)
 	}
+	return dfs(root)
+}
 
+// 230. 二叉搜索树中第K小的元素 中序列遍历，k--
+func kthSmallest(root *TreeNode, k int) int {
+	var stack []*TreeNode
+	for root != nil || len(stack) > 0 {
+		for root != nil {
+			stack = append(stack, root)
+			root = root.Left
+		}
+		root = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		k--
+		if k == 0 {
+			return root.Val
+		}
+		root = root.Right
+	}
+	return 0
+}
+
+// 230 递归
+func kthSmallestRecursion(root *TreeNode, k int) int {
+	var dfs func(*TreeNode)
+	var res int
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Left)
+		if k == 0 {
+			return
+		}
+		k--
+		if k == 0 {
+			res = node.Val
+		}
+		dfs(node.Right)
+	}
+	dfs(root)
+	return res
 }
 
 // 后序遍历，先序遍历反转
@@ -141,20 +194,17 @@ func postorderTraversal(root *TreeNode) []int {
 }
 
 // InorderTraversal 中序遍历 左中右 没有过，明天继续写
-func inorderTraversal(root *TreeNode) []int {
-	stack := make([]*TreeNode, 0)
-	res := make([]int, 0)
-	cur := root
-	for cur != nil || len(stack) > 0 {
-		if cur != nil {
-			stack = append(stack, cur)
-			cur = cur.Left
-		} else {
-			cur = stack[len(stack)-1]
-			res = append(res, cur.Val)
-			stack = stack[:len(stack)-1]
-			cur = cur.Right
+func inorderTraversal(root *TreeNode) (res []int) {
+	var stack []*TreeNode
+	for root != nil || len(stack) > 0 {
+		for root != nil {
+			stack = append(stack, root)
+			root = root.Left
 		}
+		root = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		res = append(res, root.Val)
+		root = root.Right
 	}
 	return res
 }
