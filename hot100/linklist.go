@@ -27,10 +27,10 @@ func getIntersectionNode(headA, headB *ListNode) *ListNode {
 func reverseList(head *ListNode) *ListNode {
 	var pre *ListNode
 	for cur := head; cur != nil; {
-		q := cur.Next
+		next := cur.Next
 		cur.Next = pre
 		pre = cur
-		cur = q
+		cur = next
 	}
 	return pre
 }
