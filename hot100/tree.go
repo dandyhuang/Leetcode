@@ -322,6 +322,7 @@ func findPath(node *TreeNode, targetSum int) int {
 	return count
 }
 
+// 路径总和
 func hasPathSum(root *TreeNode, targetSum int) bool {
 	if root == nil {
 		return false
@@ -356,6 +357,27 @@ func hasPathSum(root *TreeNode, targetSum int) bool {
 		res = res[size:]
 	}
 	return false
+}
+
+// 236. 二叉树的最近公共祖先 体会后续遍历
+func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if root == p || root == q {
+		return root
+	}
+	l := lowestCommonAncestor(root.Left, p, q)
+	r := lowestCommonAncestor(root.Right, p, q)
+	if l != nil && r == nil {
+		return l
+	} else if l == nil && r != nil {
+		return r
+	} else if l != nil && r != nil {
+		return root
+	} else {
+		return nil
+	}
 }
 
 // 后序遍历，先序遍历反转
