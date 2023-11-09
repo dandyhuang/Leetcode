@@ -279,3 +279,146 @@ func levelOrder(root *TreeNode) [][]int {
 	}
 	return res
 }
+
+// 114. 二叉树展开为链表
+func flatten(root *TreeNode) {
+	var res []*TreeNode
+	var dfs func(*TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		res = append(res, node)
+		dfs(node.Left)
+		dfs(node.Right)
+	}
+	dfs(root)
+	for i := 1; i < len(res); i++ {
+		pre := res[i-1]
+		pre.Left = nil
+		pre.Right = res[i]
+	}
+}
+
+// 114 二叉树展开为链表 递归
+func flattenRecursion(root *TreeNode) {
+	var dfs func(*TreeNode)
+	var pre *TreeNode
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Right)
+		dfs(node.Left)
+		node.Right = pre
+		node.Left = nil
+		pre = node
+	}
+	dfs(root)
+}
+
+// 105. 从前序与中序遍历序列构造二叉树
+func buildTree(preorder []int, inorder []int) *TreeNode {
+	if len(preorder) == 0 {
+		return nil
+	}
+	root := &TreeNode{Val: preorder[0]}
+	i := 0
+	for ; i < len(inorder); i++ {
+		if inorder[i] == preorder[0] {
+			break
+		}
+	}
+	root.Left = buildTree(preorder[1:len(inorder[:i])+1], inorder[:i])
+	root.Right = buildTree(preorder[len(inorder[:i])+1:], inorder[i+1:])
+	return root
+}
+
+// 106. 从中序与后序遍历序列构造二叉树
+func buildTreeIP(inorder []int, postorder []int) *TreeNode {
+	if len(inorder) == 0 || len(postorder) == 0 {
+		return nil
+	}
+
+	// 后序遍历的最后一个元素是树的根节点
+	root := &TreeNode{Val: postorder[len(postorder)-1]}
+
+	// 在中序遍历序列中找到根节点的位置
+	var rootIndex int
+	for i, val := range inorder {
+		if val == postorder[len(postorder)-1] {
+			rootIndex = i
+			break
+		}
+	}
+
+	// 递归构建左子树和右子树
+	root.Left = buildTreeIP(inorder[:rootIndex], postorder[:rootIndex])
+	root.Right = buildTreeIP(inorder[rootIndex+1:], postorder[rootIndex:len(postorder)-1])
+
+	return root
+}
+
+// 437. 路径总和 III 因为任何节点，都可以做为开始的节点
+func pathSum(root *TreeNode, targetSum int) int {
+	if root == nil {
+		return 0
+	}
+	countFromRoot := findPath(root, targetSum)
+	// 以左子树为根节点继续递归查找
+	countFromLeft := pathSum(root.Left, targetSum)
+
+	// 以右子树为根节点继续递归查找
+	countFromRight := pathSum(root.Right, targetSum)
+	// 返回满足条件的路径总数
+	return countFromRoot + countFromLeft + countFromRight
+}
+
+func findPath(node *TreeNode, targetSum int) int {
+	if node == nil {
+		return 0
+	}
+	count := 0
+	if node.Val == targetSum {
+		count++
+	}
+	count += findPath(node.Left, targetSum-node.Val)
+	count += findPath(node.Right, targetSum-node.Val)
+	return count
+}
+
+func hasPathSum(root *TreeNode, targetSum int) bool {
+	if root == nil {
+		return false
+	}
+	res := make([]int, 0)
+	queue := make([]*TreeNode, 0)
+	queue = append(queue, root)
+	res = append(res, root.Val)
+	for len(queue) > 0 {
+		size := len(queue)
+		for i := 0; i < size; i++ {
+			node := queue[i]
+			tmp := res[i]
+			if node.Left == nil && node.Right == nil {
+				if tmp == targetSum {
+					return true
+				}
+				continue
+			}
+
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+				res = append(res, node.Left.Val+tmp)
+			}
+
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+				res = append(res, node.Right.Val+tmp)
+			}
+		}
+		queue = queue[size:]
+		res = res[size:]
+	}
+	return false
+}
