@@ -215,71 +215,6 @@ func rightSideViewRecursion(root *TreeNode) []int {
 	return res
 }
 
-// 后序遍历，先序遍历反转
-func postorderTraversal(root *TreeNode) []int {
-	stack := make([]*TreeNode, 0)
-	res := make([]int, 0)
-	stack = append(stack, root)
-	for len(stack) > 0 {
-		cur := stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
-		res = append(res, cur.Val)
-		if cur.Right != nil {
-			stack = append(stack, cur.Right)
-		}
-		if cur.Left != nil {
-			stack = append(stack, cur.Left)
-		}
-	}
-	for i, j := 0, len(res)-1; i < j; i, j = i+1, j-1 {
-		res[i], res[j] = res[j], res[i]
-	}
-	return res
-}
-
-// InorderTraversal 中序遍历 左中右 没有过，明天继续写
-func inorderTraversal(root *TreeNode) (res []int) {
-	var stack []*TreeNode
-	for root != nil || len(stack) > 0 {
-		for root != nil {
-			stack = append(stack, root)
-			root = root.Left
-		}
-		root = stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
-		res = append(res, root.Val)
-		root = root.Right
-	}
-	return res
-}
-
-// 层序遍历
-func levelOrder(root *TreeNode) [][]int {
-	res := make([][]int, 0)
-	if root == nil {
-		return res
-	}
-	queue := make([]*TreeNode, 0)
-	queue = append(queue, root)
-	for len(queue) > 0 {
-		size := len(queue)
-		arr := make([]int, 0)
-		for i := 0; i < size; i++ {
-			node := queue[i]
-			arr = append(arr, node.Val)
-			if node.Left != nil {
-				queue = append(queue, node.Left)
-			}
-			if node.Right != nil {
-				queue = append(queue, node.Right)
-			}
-		}
-		queue = queue[size:]
-		res = append(res, arr)
-	}
-	return res
-}
-
 // 114. 二叉树展开为链表
 func flatten(root *TreeNode) {
 	var res []*TreeNode
@@ -421,4 +356,69 @@ func hasPathSum(root *TreeNode, targetSum int) bool {
 		res = res[size:]
 	}
 	return false
+}
+
+// 后序遍历，先序遍历反转
+func postorderTraversal(root *TreeNode) []int {
+	stack := make([]*TreeNode, 0)
+	res := make([]int, 0)
+	stack = append(stack, root)
+	for len(stack) > 0 {
+		cur := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		res = append(res, cur.Val)
+		if cur.Right != nil {
+			stack = append(stack, cur.Right)
+		}
+		if cur.Left != nil {
+			stack = append(stack, cur.Left)
+		}
+	}
+	for i, j := 0, len(res)-1; i < j; i, j = i+1, j-1 {
+		res[i], res[j] = res[j], res[i]
+	}
+	return res
+}
+
+// InorderTraversal 中序遍历 左中右 没有过，明天继续写
+func inorderTraversal(root *TreeNode) (res []int) {
+	var stack []*TreeNode
+	for root != nil || len(stack) > 0 {
+		for root != nil {
+			stack = append(stack, root)
+			root = root.Left
+		}
+		root = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		res = append(res, root.Val)
+		root = root.Right
+	}
+	return res
+}
+
+// 层序遍历
+func levelOrder(root *TreeNode) [][]int {
+	res := make([][]int, 0)
+	if root == nil {
+		return res
+	}
+	queue := make([]*TreeNode, 0)
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		size := len(queue)
+		arr := make([]int, 0)
+		for i := 0; i < size; i++ {
+			node := queue[i]
+			arr = append(arr, node.Val)
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+		}
+		queue = queue[size:]
+		res = append(res, arr)
+	}
+	return res
 }
