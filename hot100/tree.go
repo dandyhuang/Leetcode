@@ -171,6 +171,50 @@ func kthSmallestRecursion(root *TreeNode, k int) int {
 	return res
 }
 
+// 199. 二叉树的右视图 层序遍历取最右
+func rightSideView(root *TreeNode) []int {
+	res := make([]int, 0)
+	if root == nil {
+		return res
+	}
+	queue := make([]*TreeNode, 0)
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		size := len(queue)
+		for i := 0; i < size; i++ {
+			node := queue[i]
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+		}
+		res = append(res, queue[size-1].Val)
+		queue = queue[size:]
+	}
+	return res
+}
+
+// 199 递归
+func rightSideViewRecursion(root *TreeNode) []int {
+	var dfs func(*TreeNode, int)
+	var res []int
+	dfs = func(node *TreeNode, depth int) {
+		if node == nil {
+			return
+		}
+		if depth == len(res) {
+			res = append(res, node.Val)
+		}
+		depth++
+		dfs(node.Right, depth)
+		dfs(node.Left, depth)
+	}
+	dfs(root, 0)
+	return res
+}
+
 // 后序遍历，先序遍历反转
 func postorderTraversal(root *TreeNode) []int {
 	stack := make([]*TreeNode, 0)
