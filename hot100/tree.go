@@ -1,6 +1,9 @@
 package leetcode_hot100
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 type TreeNode struct {
 	Left  *TreeNode
@@ -378,6 +381,31 @@ func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 	} else {
 		return nil
 	}
+}
+
+// 124. 二叉树中的最大路径和
+func maxPathSum(root *TreeNode) int {
+	maxSum := math.MinInt32
+
+	var dfs func(root *TreeNode) int
+	dfs = func(root *TreeNode) int {
+		if root == nil {
+			return 0
+		}
+		left := dfs(root.Left)
+		right := dfs(root.Right)
+
+		sum := left + root.Val + right
+		maxSum = max(maxSum, sum)
+		fmt.Println(root.Val, sum, left, right, maxSum)
+		// 左右两个子节点，只能选取其中一个
+		output := root.Val + max(left, right)
+		// 返回最大值，如果相加后，都小于0，那就抛弃当前节点下的所有节点
+		return max(output, 0)
+	}
+
+	dfs(root)
+	return maxSum
 }
 
 // 后序遍历，先序遍历反转
