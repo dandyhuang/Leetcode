@@ -106,3 +106,64 @@ func yReverseKGroup(head *ListNode, k int) *ListNode {
 	}
 	return dummy.Next
 }
+
+// 78. 子集
+// 输入：nums = [1,2,3]
+// 输出：[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
+func ySubsets(nums []int) [][]int {
+	var res [][]int
+	var arr []int
+	var dfs func(int, []int, []int)
+	dfs = func(start int, nums []int, arr []int) {
+		tmp := make([]int, len(arr))
+		copy(tmp, arr)
+		res = append(res, tmp)
+		if start >= len(nums) {
+			return
+		}
+		for i := start; i < len(nums); i++ {
+			arr = append(arr, nums[i])
+			dfs(start+1, nums, arr)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(0, nums, arr)
+	return res
+}
+
+// 17. 电话号码的字母组合
+func letterCombinations(digits string) []string {
+	var res []string
+	if digits == "" {
+		return res
+	}
+	m := map[byte]string{
+		'2': "abc",
+		'3': "def",
+		'4': "ghi",
+		'5': "jkl",
+		'6': "mno",
+		'7': "pqrs",
+		'8': "tuv",
+		'9': "wxyz",
+	}
+	var arr []byte
+	var dfs func(string, []byte, int)
+	dfs = func(digits string, arr []byte, start int) {
+		if len(arr) == len(digits) {
+			tmp := make([]byte, len(arr))
+			copy(tmp, arr)
+			res = append(res, string(tmp))
+			return
+		}
+		letters := m[digits[start]]
+		for i := 0; i < len(letters); i++ {
+			arr = append(arr, letters[i])
+			dfs(digits, arr, start+1)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(digits, arr, 0)
+
+	return res
+}
