@@ -130,24 +130,19 @@ func generateParenthesis(n int) []string {
 	dfs = func(l, r, n int, s []byte) {
 		if l == n && r == n {
 			tmp := make([]byte, len(s))
-			fmt.Println("tmp:", tmp)
 			copy(tmp, s)
 			res = append(res, string(s))
 			return
 		}
 		if l < n {
 			s = append(s, '(')
-			fmt.Println("inl:", s, l, r)
 			dfs(l+1, r, n, s)
 			s = s[:len(s)-1]
-			fmt.Println("outl:", s, l, r)
 		}
 		if r < l {
 			s = append(s, ')')
-			fmt.Println("inr", s, l, r)
 			dfs(l, r+1, n, s)
 			s = s[:len(s)-1]
-			fmt.Println("outr", s, l, r)
 		}
 	}
 	dfs(0, 0, n, s)
