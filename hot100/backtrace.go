@@ -148,3 +148,40 @@ func generateParenthesis(n int) []string {
 	dfs(0, 0, n, s)
 	return res
 }
+
+// 79. 单词搜索 和岛屿数量是一样的
+func exist(board [][]byte, word string) bool {
+	rows := len(board)
+	cols := len(board[0])
+	visited := make([][]bool, rows)
+	for i := 0; i < rows; i++ {
+		visited[i] = make([]bool, cols)
+	}
+	var dfs func(board [][]byte, word string, row, col, rows, cols, index int, visited [][]bool) bool
+	dfs = func(board [][]byte, word string, row, col, rows, cols, index int, visited [][]bool) bool {
+		if index == len(word) {
+			return true
+		}
+		if row < 0 || row >= rows || col < 0 || col >= cols ||
+			visited[row][col] || board[row][col] != word[index] {
+			return false
+		}
+		visited[row][col] = true
+		if dfs(board, word, row+1, col, rows, cols, index+1, visited) ||
+			dfs(board, word, row-1, col, rows, cols, index+1, visited) ||
+			dfs(board, word, row, col+1, rows, cols, index+1, visited) ||
+			dfs(board, word, row, col-1, rows, cols, index+1, visited) {
+			return true
+		}
+		visited[row][col] = false
+		return false
+	}
+	for i := 0; i < len(board); i++ {
+		for j := 0; j < len(board[0]); j++ {
+			if dfs(board, word, i, j, rows, cols, 0, visited) {
+				return true
+			}
+		}
+	}
+	return false
+}
