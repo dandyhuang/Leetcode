@@ -185,3 +185,37 @@ func exist(board [][]byte, word string) bool {
 	}
 	return false
 }
+func isPalindromeStr(s string) bool {
+	for i, j := 0, len(s)-1; i < j; {
+		if s[i] != s[j] {
+			return false
+		}
+		i++
+		j--
+	}
+	return true
+}
+
+// 131. 分割回文串
+func partition(s string) [][]string {
+	var res [][]string
+	var arr []string
+	var dfs func(s string, start int)
+	dfs = func(s string, start int) {
+		if start == len(s) {
+			tmp := make([]string, len(arr))
+			copy(tmp, arr)
+			res = append(res, tmp)
+			return
+		}
+		for i := start; i < len(s); i++ {
+			if isPalindromeStr(s[start : i+1]) {
+				arr = append(arr, s[start:i+1])
+				dfs(s, i+1)
+				arr = arr[:len(arr)-1]
+			}
+		}
+	}
+	dfs(s, 0)
+	return res
+}
