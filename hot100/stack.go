@@ -1,5 +1,10 @@
 package leetcode_hot100
 
+import (
+	"strconv"
+	"strings"
+)
+
 // 20. 有效的括号
 func isValid(s string) bool {
 	stack := make([]byte, 0)
@@ -20,4 +25,38 @@ func isValid(s string) bool {
 		}
 	}
 	return len(stack) == 0
+}
+
+// 394. 字符串解码
+// 输入：s = "3[a]2[bc]"
+// 输出："aaabcbc"
+func decodeString(s string) string {
+	stack := make([]string, 0)
+	num := 0
+	res := ""
+	for _, char := range s {
+		if char >= '0' && char <= '9' {
+			num = num*10 + int(char-'0')
+		} else if char == '[' {
+			// 保存原来的字符串
+			stack = append(stack, strconv.Itoa(num), res)
+			// 留给后续构造使用
+			res = ""
+			num = 0
+		} else if char == ']' {
+			preRes := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			times, _ := strconv.Atoi(stack[len(stack)-1])
+			stack = stack[:len(stack)-1]
+			res = preRes + strings.Repeat(res, times)
+		} else {
+			res += string(char)
+		}
+	}
+	return res
+}
+
+// 739. 每日温度
+func dailyTemperatures(temperatures []int) []int {
+
 }
