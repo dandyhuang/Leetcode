@@ -209,13 +209,75 @@ func partition(s string) [][]string {
 			return
 		}
 		for i := start; i < len(s); i++ {
+			fmt.Println(s[start : i+1])
 			if isPalindromeStr(s[start : i+1]) {
 				arr = append(arr, s[start:i+1])
+				fmt.Println("in:", arr, i, start)
 				dfs(s, i+1)
 				arr = arr[:len(arr)-1]
+				fmt.Println("out:", arr, i, start)
 			}
 		}
 	}
 	dfs(s, 0)
+	return res
+}
+
+// 51. N 皇后
+// 输入：n = 4
+// 输出：[[".Q..","...Q","Q...","..Q."],["..Q.","Q...","...Q",".Q.."]]
+func isQueens(row, col int, arr [][]byte) bool {
+	n := len(arr)
+	// 检查同一列是否有皇后
+	// 因为我们是每行每行的放置，因此当前行数以下都没有放置皇后所以扫描当前行数以上的就行了
+	for i := 0; i < row; i++ {
+		if arr[i][col] == 'Q' {
+			return false
+		}
+	}
+	// 检查左上方是否有皇后, 以下都还没放,后续增加也会检查到
+	for i, j := row-1, col-1; i >= 0 && j >= 0; i, j = i-1, j-1 {
+		if arr[i][j] == 'Q' {
+			return false
+		}
+	}
+
+	// 检查右上方是否有皇后
+	for i, j := row-1, col+1; i >= 0 && j < n; i, j = i-1, j+1 {
+		if arr[i][j] == 'Q' {
+			return false
+		}
+	}
+	return true
+}
+func solveNQueens(n int) [][]string {
+	var res [][]string
+	arr := make([][]byte, n)
+	for i := 0; i < len(arr); i++ {
+		arr[i] = make([]byte, n)
+		for j := 0; j < len(arr[i]); j++ {
+			arr[i][j] = '.'
+		}
+	}
+
+	var dfs func(n, row int)
+	dfs = func(n, row int) {
+		if row == n {
+			tmp := make([]string, 0)
+			for i := 0; i < n; i++ {
+				tmp = append(tmp, string(arr[i]))
+			}
+			res = append(res, tmp)
+		}
+		for col := 0; col < n; col++ {
+			if isQueens(row, col, arr) {
+				arr[row][col] = 'Q'
+				// 递归每一行
+				dfs(n, row+1)
+				arr[row][col] = '.'
+			}
+		}
+	}
+	dfs(n, 0)
 	return res
 }

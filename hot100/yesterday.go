@@ -167,3 +167,9 @@ func letterCombinations(digits string) []string {
 
 	return res
 }
+
+//
+func ySolveNQueens(n int) [][]string {
+	var res [][]string
+	return res
+}
