@@ -57,6 +57,17 @@ func decodeString(s string) string {
 }
 
 // 739. 每日温度
-func dailyTemperatures(temperatures []int) []int {
+func dailyTemperatures(T []int) []int {
+	stack := make([]int, 0)
+	res := make([]int, len(T))
+	for i, _ := range T {
+		for len(stack) > 0 && T[stack[len(stack)-1]] < T[i] {
+			index := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			res[index] = i - index
+		}
+		stack = append(stack, i)
+	}
 
+	return res
 }
