@@ -23,6 +23,12 @@ func mins(a, b int) int {
 	}
 	return b
 }
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
 
 // 11. 盛最多水的容器
 func maxArea(height []int) int {
@@ -98,11 +104,5 @@ func trap(height []int) int {
 		size := mins(lMax[i], rMax[i]) - height[i]
 		total += size
 	}
-	return total
-}
-
-// 84. 柱状图中最大的矩形
-func largestRectangleArea(heights []int) int {
-	total := 0
 	return total
 }

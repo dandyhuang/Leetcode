@@ -57,6 +57,52 @@ func decodeString(s string) string {
 }
 
 // 739. 每日温度
+// 输入: temperatures = [73,74,75,71,69,72,76,73]
+// 输出: [1,1,4,2,1,1,0,0]
 func dailyTemperatures(temperatures []int) []int {
+	stack := make([]int, 0)
+	res := make([]int, len(stack))
+	for i, v := range temperatures {
+		for len(stack) > 0 && v > temperatures[stack[len(stack)-1]] {
+			index := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			res[index] = i - index
+		}
+		stack = append(stack, i)
+	}
+	return res
+}
 
+// 84. 柱状图中最大的矩形 和每日温度刚好相反
+// 输入：heights = [2,1,5,6,2,3]
+// 输出：10
+// 当前栈，左右两边，找到最小值
+func largestRectangleArea(heights []int) int {
+	stack := make([]int, 0)
+	maxArea := 0
+	for r := 0; r <= len(heights); r++ {
+		var h int
+		// 单调递增的情况
+		if r == len(heights) {
+			h = 0 // 处理最后一个元素，使得栈内元素全部出栈
+		} else {
+			h = heights[r]
+		}
+		// 当栈非空且当前高度小于栈顶高度时，出栈并计算面积
+		for len(stack) > 0 && h < heights[stack[len(stack)-1]] {
+			idx := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			left := 0
+			// 对头计算
+			if len(stack) == 0 {
+				left = -1
+			} else {
+				left = stack[len(stack)-1]
+			}
+			maxArea = max(maxArea, heights[idx]*(r-left-1))
+		}
+		// 将当前索引入栈
+		stack = append(stack, r)
+	}
+	return maxArea
 }
