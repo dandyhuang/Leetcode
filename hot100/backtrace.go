@@ -212,10 +212,8 @@ func partition(s string) [][]string {
 			fmt.Println(s[start : i+1])
 			if isPalindromeStr(s[start : i+1]) {
 				arr = append(arr, s[start:i+1])
-				fmt.Println("in:", arr, i, start)
 				dfs(s, i+1)
 				arr = arr[:len(arr)-1]
-				fmt.Println("out:", arr, i, start)
 			}
 		}
 	}
