@@ -167,5 +167,177 @@ func lengthOfLIS(nums []int) int {
 	}
 	return ans
 }
-i = 1
-ans = 0
+
+// 674. 最长连续递增序列
+// 输入：nums = [1,3,5,4,7]
+// 输出：3
+// 解释：最长连续递增序列是 [1,3,5], 长度为3。尽管 [1,3,5,7] 也是升序的子序列, 但它不是连续的，因为 5 和 7 在原数组里被 4 隔开。
+func findLengthOfLCIS(nums []int) int {
+	dp := make([]int, len(nums))
+	for i := range dp {
+		dp[i] = 1
+	}
+	ans := dp[0]
+	// dp[i]以下标i为结尾的连续递增的子序列长度为dp[i]。
+	for i := 1; i < len(nums); i++ {
+		if nums[i] > nums[i-1] {
+			dp[i] = dp[i-1] + 1
+		}
+		if dp[i] > ans {
+			ans = dp[i]
+		}
+	}
+	return ans
+}
+
+// 718. 最长重复子数组
+// A: [1,2,3,2,1]
+// B: [3,2,1,4,7]
+// 输出：3
+// 解释：长度最长的公共子数组是 [3, 2, 1] 。
+func findLength(nums1 []int, nums2 []int) int {
+	m, n := len(nums1), len(nums2)
+	dp := make([][]int, m+1)
+	for i := 0; i <= m; i++ {
+		dp[i] = make([]int, n+1)
+	}
+	res := 0
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if nums2[j-1] == nums1[i-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			}
+			if dp[i][j] > res {
+				res = dp[i][j]
+			}
+		}
+	}
+	return res
+}
+
+// 1143.最长公共子序列
+// 输入：text1 = "abcde", text2 = "ace"
+// 输出：3
+// 解释：最长公共子序列是 "ace"，它的长度为 3。
+func longestCommonSubsequence(text1 string, text2 string) int {
+	t1 := len(text1)
+	t2 := len(text2)
+	dp := make([][]int, t1+1)
+	for i := range dp {
+		dp[i] = make([]int, t2+1)
+	}
+
+	for i := 1; i <= t1; i++ {
+		for j := 1; j <= t2; j++ {
+			if text1[i-1] == text2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+			}
+		}
+	}
+	return dp[t1][t2]
+}
+
+// 53. 最大子序和
+// 输入: [-2,1,-3,4,-1,2,1,-5,4]
+// 输出: 6
+// 解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
+func maxSubArrayV1(nums []int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+	dp := make([]int, len(nums))
+	res := nums[0]
+	dp[0] = nums[0]
+	for i := 1; i < len(nums); i++ {
+		dp[i] = max(nums[i], dp[i-1]+nums[i])
+		res = maxs(res, dp[i])
+	}
+	return res
+}
+
+// 152. 乘积最大子数组
+// 输入: nums = [2,3,-2,4]
+// 输出: 6
+// 解释: 子数组 [2,3] 有最大乘积 6。
+func maxProduct(nums []int) int {
+	dpMax := make([]int, len(nums)+1)
+	dpMin := make([]int, len(nums)+1)
+	res := nums[0]
+	dpMax[0] = nums[0]
+	dpMin[0] = nums[0]
+	for i := 1; i < len(nums); i++ {
+		if nums[i] > 0 {
+			dpMax[i] = max(nums[i], dpMax[i-1]*nums[i])
+			dpMin[i] = min(nums[i], dpMin[i-1]*nums[i])
+		} else {
+			dpMax[i] = max(nums[i], dpMin[i-1]*nums[i])
+			dpMin[i] = min(nums[i], dpMax[i-1]*nums[i])
+		}
+		res = max(res, dpMax[i])
+	}
+	return res
+}
+
+// 416. 分割等和子集
+// 输入：nums = [1,5,11,5]
+// 输出：true
+// 解释：数组可以分割成 [1, 5, 5] 和 [11] 。
+func canPartition(nums []int) bool {
+	// dp[j] 表示： 容量为j的背包，所背的物品价值最大可以为dp[j]。
+	// dp[j]表示 背包总容量（所能装的总重量）是j，放进物品后，背的最大重量为dp[j]。
+	sum := 0
+	for _, num := range nums {
+		sum += num
+	}
+	// 奇数则不可能平分成两个子集
+	if sum%2 == 1 {
+		return false
+	}
+
+	target := sum / 2
+	dp := make([]int, target+1)
+
+	for _, num := range nums { // 物品 不能重复
+		for j := target; j >= num; j-- { // 背包
+			dp[j] = max(dp[j], dp[j-num]+num)
+		}
+	}
+	return dp[target] == target
+}
+
+// 32. 最长有效括号
+// 输入：s = "(()(())"
+// 输出：6
+// 解释：最长有效括号子串是 "()()"
+func longestValidParentheses(s string) int {
+	n := len(s)
+	if n < 2 {
+		return 0
+	}
+	// dp[i] 表示以 s[i] 结尾的最长有效括号的长度
+	dp := make([]int, n)
+	res := 0
+	for i := 1; i < n; i++ {
+		if s[i] == ')' {
+			if s[i-1] == '(' {
+				// 当前字符为')'且前一个字符为'('时，自身为2个字符()
+				if i >= 2 {
+					dp[i] = dp[i-2] + 2
+				} else {
+					dp[i] = 2
+				}
+			} else if i-dp[i-1] > 0 && s[i-dp[i-1]-1] == '(' {
+				if i-dp[i-1] >= 2 {
+					dp[i] = dp[i-1] + dp[i-dp[i-1]-2] + 2
+				} else {
+					// "(()())" 这种场景
+					dp[i] = dp[i-1] + 2
+				}
+			}
+		}
+		res = max(res, dp[i])
+	}
+	return res
+}
