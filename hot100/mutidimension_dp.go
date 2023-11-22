@@ -83,5 +83,5 @@ func extend(l, r int, s string) string {
 
 // 动态归纳法
 func longestPalindromeDp(s string) string {
-
+	// dp[i][j] 子出串i-j是否是回文子串
 }
