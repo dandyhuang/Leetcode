@@ -84,4 +84,32 @@ func extend(l, r int, s string) string {
 // 动态归纳法
 func longestPalindromeDp(s string) string {
 	// dp[i][j] 子出串i-j是否是回文子串
+	n := len(s)
+	dp := make([][]bool, n)
+	for i := range dp {
+		dp[i] = make([]bool, n)
+	}
+	for i := 0; i < n; i++ {
+		dp[i][i] = true
+	}
+	start := 0
+	maxLen := 1
+	for j := 1; j < n; j++ {
+		for i := 0; i < j; i++ {
+			if s[i] != s[j] {
+				dp[i][j] = false
+			} else {
+				if j-i < 3 {
+					dp[i][j] = true
+				} else {
+					dp[i][j] = dp[i+1][j-1]
+				}
+			}
+			if dp[i][j] && j-i+1 > maxLen {
+				maxLen = j - i + 1
+				start = i
+			}
+		}
+	}
+	return s[start : start+maxLen]
 }
