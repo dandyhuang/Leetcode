@@ -62,3 +62,27 @@ func sortColors(nums []int) {
 func nextPermutation(nums []int) {
 
 }
+
+// 287. 寻找重复数
+func findDuplicate(nums []int) int {
+	slow, fast := nums[0], nums[0]
+
+	// 快慢指针相遇
+	for {
+		slow = nums[slow]
+		fast = nums[nums[fast]]
+		if slow == fast {
+			break
+		}
+	}
+
+	// 重新设置慢指针，并与快指针相遇
+	slow = nums[0]
+	for slow != fast {
+		slow = nums[slow]
+		fast = nums[fast]
+	}
+
+	// 返回相遇点即为重复数
+	return slow
+}

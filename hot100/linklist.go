@@ -223,3 +223,26 @@ func reverseKGroup(head *ListNode, k int) *ListNode {
 	}
 	return dummy.Next
 }
+
+type Node struct {
+	Val    int
+	Next   *Node
+	Random *Node
+}
+
+// 138. 随机链表的复制
+func copyRandomList(head *Node) *Node {
+	m := make(map[*Node]*Node)
+	for cur := head; cur != nil; cur = cur.Next {
+		m[cur] = &Node{Val: cur.Val}
+	}
+	for cur := head; cur != nil; cur = cur.Next {
+		if cur.Next != nil {
+			m[cur].Next = m[cur.Next]
+		}
+		if cur.Random != nil {
+			m[cur].Random = m[cur.Random]
+		}
+	}
+	return m[head]
+}
