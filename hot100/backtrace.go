@@ -34,6 +34,8 @@ func combine(n int, k int) [][]int {
 }
 
 // 46. 全排列
+// 输入：nums = [1,2,3]
+// 输出：[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
 func permute(nums []int) [][]int {
 	var res [][]int
 	var arr []int
@@ -197,6 +199,8 @@ func isPalindromeStr(s string) bool {
 }
 
 // 131. 分割回文串
+// 输入：s = "aab"
+// 输出：[["a","a","b"],["aa","b"]]
 func partition(s string) [][]string {
 	var res [][]string
 	var arr []string

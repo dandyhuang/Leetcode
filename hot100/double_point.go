@@ -3,6 +3,8 @@ package leetcode_hot100
 import "sort"
 
 // 283. 移动零
+// 输入: nums = [0,1,0,3,12]
+// 输出: [1,3,12,0,0]
 func moveZeroes(nums []int) {
 	start := 0
 	for _, v := range nums {

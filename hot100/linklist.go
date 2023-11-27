@@ -246,3 +246,137 @@ func copyRandomList(head *Node) *Node {
 	}
 	return m[head]
 }
+
+// 148. 排序链表
+// 输入：head = [4,2,1,3]
+// 输出：[1,2,3,4]
+func sortList(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+
+	// 找到链表的中点
+	pre := findMiddle(head)
+	mid := pre.Next
+	pre.Next = nil // 切断链表，分为两个独立的链表
+	// 递归排序左右两部分链表
+	left := sortList(head)
+	right := sortList(mid)
+
+	// 合并有序链表
+	return mergeSort(left, right)
+}
+
+func findMiddle(head *ListNode) *ListNode {
+	slow, fast := head, head
+	var prev *ListNode
+
+	for fast != nil && fast.Next != nil {
+		prev = slow
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+
+	return prev
+}
+
+func mergeSort(l1, l2 *ListNode) *ListNode {
+	dummy := &ListNode{}
+	current := dummy
+
+	for l1 != nil && l2 != nil {
+		if l1.Val < l2.Val {
+			current.Next = l1
+			l1 = l1.Next
+		} else {
+			current.Next = l2
+			l2 = l2.Next
+		}
+		current = current.Next
+	}
+
+	if l1 != nil {
+		current.Next = l1
+	}
+
+	if l2 != nil {
+		current.Next = l2
+	}
+
+	return dummy.Next
+}
+
+func sortListV2(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	slow, fast := head, head.Next // 偶数情况，需要返回中位数的前一个
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+	mid := slow.Next
+	slow.Next = nil
+	left := sortList(head)
+	right := sortList(mid)
+	dump := &ListNode{}
+	cur := dump
+	for left != nil && right != nil {
+		if left.Val < right.Val {
+			cur.Next = left
+			left = left.Next
+		} else {
+			cur.Next = right
+			right = right.Next
+		}
+		cur = cur.Next
+	}
+	if left != nil {
+		cur.Next = left
+	}
+	if right != nil {
+		cur.Next = right
+	}
+	return dump.Next
+}
+
+// 23. 合并 K 个升序链表
+func mergeTwoList(a *ListNode, b *ListNode) *ListNode {
+	dump := &ListNode{}
+	tmp := dump
+	for a != nil && b != nil {
+		if a.Val < b.Val {
+			tmp.Next = a
+			a = a.Next
+		} else {
+			tmp.Next = b
+			b = b.Next
+		}
+		tmp = tmp.Next
+	}
+	if a != nil {
+		tmp.Next = a
+	}
+	if b != nil {
+		tmp.Next = b
+	}
+	return dump.Next
+}
+
+// 输入：lists = [[1,4,5],[1,3,4],[2,6]]
+// 输出：[1,1,2,3,4,4,5,6]
+// 解释：链表数组如下：
+// [
+//
+//	1->4->5,
+//	1->3->4,
+//	2->6
+//
+// ]
+func mergeKLists(lists []*ListNode) *ListNode {
+	var res *ListNode
+	for i := range lists {
+		res = mergeTwoList(res, lists[i])
+	}
+	return res
+}
