@@ -1,24 +1,23 @@
 package leetcode_hot100
 
 // 3. 无重复字符的最长子串
+// 输入: s = "abcabcbb"
+// 输出: 3
+// 解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
 func lengthOfLongestSubstring(s string) int {
-	total := 0
-	str := []byte(s)
-	m := make(map[byte]int)
-	start := 0
-	for i := 0; i < len(str); i++ {
-		// abba情况
-		if v, ok := m[str[i]]; ok && v >= start {
-			// 相等说明找到了
-			num := i - start
-			total = maxs(num, total)
-			start = m[str[i]] + 1
+	res := 0
+	m := make(map[byte]bool, 0)
+	l := 0
+	for i := range s {
+		c := s[i]
+		for m[c] {
+			delete(m, s[l])
+			l++
 		}
-		m[str[i]] = i
+		m[c] = true
+		res = max(res, i-l+1)
 	}
-	fina := len(str) - start
-	total = maxs(fina, total)
-	return total
+	return res
 }
 
 // 438. 找到字符串中所有字母异位词

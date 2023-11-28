@@ -87,6 +87,8 @@ func threeSum(nums []int) [][]int {
 }
 
 // 接雨水
+// 输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
+// 输出：6
 func trap(height []int) int {
 	if len(height) <= 2 {
 		return 0
