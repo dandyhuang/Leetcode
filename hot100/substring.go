@@ -1,5 +1,7 @@
 package leetcode_hot100
 
+import "math"
+
 // 560. 和为 K 的子数组 前缀和哈希表
 // 给你一个整数数组 nums 和一个整数 k ，请你统计并返回 该数组中和为 k 的子数组的个数 。
 // 子数组是数组中元素的连续非空序列。
@@ -26,16 +28,17 @@ func subarraySum(nums []int, k int) int {
 
 // 560. 和为 K 的子数组 前缀和哈希表
 func subarraySum2(nums []int, k int) int {
-	count := 0
 	m := make(map[int]int)
 	// 初始前缀和为 0 的个数为 1
-	m[0] = 1
 	sum := 0
+	count := 0
+	// 当第一次sum-k为0的时候，就会出现漏记录的情况，比如2,-1,-1,0 k=0的时候
+	m[0] = 1
 	for i := 0; i < len(nums); i++ {
 		sum += nums[i]
-		num := sum - k
-		if v, ok := m[num]; ok {
-			count += v
+		if m[sum-k] > 0 {
+			// 为什么不是count++而是+v呢,因为不是m[sum]>0
+			count += m[sum-k]
 		}
 		m[sum]++
 	}
@@ -76,6 +79,9 @@ func maxSlidingWindow(nums []int, k int) []int {
 }
 
 // 76. 最小覆盖子串
+// 输入：s = "ADOBECODEBANC", t = "ABC"
+// 输出："BANC"
+// 解释：最小覆盖子串 "BANC" 包含来自字符串 t 的 'A'、'B' 和 'C'。
 func minWindow(s string, t string) string {
 	sM := make(map[byte]int)
 	tM := make(map[byte]int)
@@ -102,4 +108,43 @@ func minWindow(s string, t string) string {
 		}
 	}
 	return res
+}
+
+func minWindow1(s string, t string) string {
+	ori, cnt := map[byte]int{}, map[byte]int{}
+	for i := 0; i < len(t); i++ {
+		ori[t[i]]++
+	}
+
+	sLen := len(s)
+	len := math.MaxInt32
+	ansL, ansR := -1, -1
+
+	check := func() bool {
+		for k, v := range ori {
+			if cnt[k] < v {
+				return false
+			}
+		}
+		return true
+	}
+	for l, r := 0, 0; r < sLen; r++ {
+		if r < sLen && ori[s[r]] > 0 {
+			cnt[s[r]]++
+		}
+		for check() && l <= r {
+			if r-l+1 < len {
+				len = r - l + 1
+				ansL, ansR = l, l+len
+			}
+			if _, ok := ori[s[l]]; ok {
+				cnt[s[l]] -= 1
+			}
+			l++
+		}
+	}
+	if ansL == -1 {
+		return ""
+	}
+	return s[ansL:ansR]
 }
