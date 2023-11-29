@@ -5,7 +5,25 @@ package hot100_2
 // 输入：matrix = [[1,1,1],[1,0,1],[1,1,1]]
 // 输出：[[1,0,1],[0,0,0],[1,0,1]]
 func setZeroes(matrix [][]int) {
+	rows, cols := len(matrix), len(matrix[0])
+	var res [][]int
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			if matrix[i][j] == 0 {
+				res = append(res, []int{i, j})
+			}
+		}
+	}
 
+	for i := range res {
+		row, col := res[i][0], res[i][1]
+		for j := 0; j < cols; j++ {
+			matrix[row][j] = 0
+		}
+		for j := 0; j < rows; j++ {
+			matrix[j][col] = 0
+		}
+	}
 }
 
 // 54. 螺旋矩阵
@@ -13,6 +31,7 @@ func setZeroes(matrix [][]int) {
 // 输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
 // 输出：[1,2,3,6,9,8,7,4,5]
 func spiralOrder(matrix [][]int) []int {
+
 }
 
 // 48. 旋转图像
