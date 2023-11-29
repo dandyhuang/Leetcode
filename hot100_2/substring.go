@@ -92,6 +92,8 @@ func (q *MyQueue) Pop(val int) {
 }
 
 // 239. 滑动窗口最大值
+// 输入：nums = [1,3,-1,-3,5,3,6,7], k = 3
+// 输出：[3,3,5,5,6,7]
 func maxSlidingWindowV2(nums []int, k int) []int {
 	q := &MyQueue{}
 	res := make([]int, 0)
@@ -126,14 +128,14 @@ func minWindow(s string, t string) string {
 			return false
 		}
 		for k, v := range mT {
-			if mS[k] != v {
+			if mS[k] < v {
 				return false
 			}
 		}
 		return true
 	}
 	left := 0
-	n := len(s)
+	n := len(s) + 1
 	for i := range s {
 		mS[s[i]]++
 		for check(mS, mT) {
@@ -143,9 +145,7 @@ func minWindow(s string, t string) string {
 			}
 
 			mS[s[left]]--
-			if mS[s[left]] == 0 {
-				delete(mS, s[left])
-			}
+
 			left++
 		}
 	}
