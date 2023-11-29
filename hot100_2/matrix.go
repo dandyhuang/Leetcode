@@ -31,8 +31,36 @@ func setZeroes(matrix [][]int) {
 // 输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
 // 输出：[1,2,3,6,9,8,7,4,5]
 func spiralOrder(matrix [][]int) []int {
+	var res []int
+	l, r, top, bottom := 0, len(matrix[0])-1, 0, len(matrix)-1
+	for l <= r && top <= bottom {
+		for i := l; i <= r; i++ {
+			res = append(res, matrix[top][i])
+		}
+		top++
+		if top > bottom {
+			break
+		}
+		for i := top; i <= bottom; i++ {
+			res = append(res, matrix[i][r])
+		}
+		r--
+		// r = l =1 的时候，多打印了6 这时候top > bottom了
+		if r < l {
+			break
+		}
+		for i := r; i >= l; i-- {
+			res = append(res, matrix[bottom][i])
+		}
+		bottom--
+		for i := bottom; i >= top; i-- {
+			res = append(res, matrix[i][l])
+		}
+		l++
+	}
+	return res
+}}
 
-}
 
 // 48. 旋转图像
 // 给定一个 n × n 的二维矩阵 matrix 表示一个图像。请你将图像顺时针旋转 90 度。
