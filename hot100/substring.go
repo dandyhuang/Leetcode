@@ -1,6 +1,10 @@
 package leetcode_hot100
 
 // 560. 和为 K 的子数组 前缀和哈希表
+// 给你一个整数数组 nums 和一个整数 k ，请你统计并返回 该数组中和为 k 的子数组的个数 。
+// 子数组是数组中元素的连续非空序列。
+// 输入：nums = [1,1,1], k = 2
+// 输出：2
 func subarraySum(nums []int, k int) int {
 	count := 0
 	preSum := make([]int, len(nums)+1)
@@ -24,6 +28,7 @@ func subarraySum(nums []int, k int) int {
 func subarraySum2(nums []int, k int) int {
 	count := 0
 	m := make(map[int]int)
+	// 初始前缀和为 0 的个数为 1
 	m[0] = 1
 	sum := 0
 	for i := 0; i < len(nums); i++ {
