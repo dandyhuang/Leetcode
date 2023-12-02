@@ -190,6 +190,8 @@ func swapPairs(head *ListNode) *ListNode {
 }
 
 // 24. 两两交换链表中的节点 递归
+// 输入：head = [1,2,3,4]
+// 输出：[2,1,4,3]
 func swapPairsRecursion(head *ListNode) *ListNode {
 	if head == nil && head.Next == nil {
 		return head

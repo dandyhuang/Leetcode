@@ -67,7 +67,17 @@ func spiralOrder(matrix [][]int) []int {
 // 输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
 // 输出：[[7,4,1],[8,5,2],[9,6,3]]
 func mRotate(matrix [][]int) {
-
+	n:= len(matrix)
+	tmp:=make([][]int, len(matrix))
+	for i:= range tmp {
+		tmp[i] = make([]int, len(matrix[i]))
+	}
+	for i:=0;i < n;i++ {
+		for j:=0;j<n;j++ {
+			tmp[j][n-i-1] = matrix[i][j]
+		}
+	}
+	copy(matrix, tmp)
 }
 
 // 240. 搜索二维矩阵 II
@@ -75,6 +85,19 @@ func mRotate(matrix [][]int) {
 // 每行的元素从左到右升序排列。
 // 每列的元素从上到下升序排列。
 func searchMatrix(matrix [][]int, target int) bool {
-
+	i, j:=len(matrix)-1, 0
+	for i>=0 && j < len(matrix[0]) {
+		if matrix[i][j] > target {
+			i--
+		} else if matrix[i][j] < target {
+			j++
+		} else {
+			return true
+		}
+	}
 	return false
 }
+
+
+
+
