@@ -244,14 +244,43 @@ func swapPairs(head *ListNode) *ListNode {
 }
 
 // 24. 两两交换链表中的节点 递归
+// 输入：head = [1,2,3,4]
+// 输出：[2,1,4,3]
 func swapPairsRecursion(head *ListNode) *ListNode {
-
+	if head == nil || head.Next == nil {
+		return head
+	}
+	next := head.Next
+	tmp := swapPairsRecursion(next.Next)
+	head.Next = tmp
+	next.Next = head
+	return next
 }
 
 // 25. K 个一组翻转链表
 // 输入：head = [1,2,3,4,5], k = 2
 // 输出：[2,1,4,3,5]
 func reverseKGroup(head *ListNode, k int) *ListNode {
+	dummy := &ListNode{}
+	preHead := dummy
+	for head != nil {
+		oHead := head
+		groupLastTail := head
+		for i := 1; i < k && groupLastTail != nil; i++ {
+			groupLastTail = groupLastTail.Next
+		}
+		if groupLastTail == nil {
+			break
+		}
+		groupHead := groupLastTail.Next
+		groupLastTail.Next = nil
+		revertHead := reverseList(head)
+		preHead.Next = revertHead
+		oHead.Next = groupHead
+		head = groupHead
+		preHead = oHead
+	}
+	return dummy.Next
 }
 
 type Node struct {
@@ -283,7 +312,37 @@ func copyRandomList(head *Node) *Node {
 // 输入：head = [4,2,1,3]
 // 输出：[1,2,3,4]
 func sortList(head *ListNode) *ListNode {
-
+	if head == nil {
+		return head
+	}
+	fast, slow := head, head.Next
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+	mid := slow.Next
+	slow.Next = nil
+	left := sortList(head)
+	right := sortList(mid)
+	dummy := &ListNode{}
+	cur := dummy
+	for left != nil && right != nil {
+		if left.Val < right.Val {
+			cur.Next = left
+			left = left.Next
+		} else {
+			cur.Next = right
+			right = right.Next
+		}
+		cur = cur.Next
+	}
+	if left != nil {
+		cur.Next = left
+	}
+	if right != nil {
+		cur.Next = right
+	}
+	return dummy.Next
 }
 
 // 输入：lists = [[1,4,5],[1,3,4],[2,6]]
