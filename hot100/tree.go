@@ -112,7 +112,7 @@ func sortedArrayToBST(nums []int) *TreeNode {
 }
 
 // 98. 验证二叉搜索树  中序便利，判断是否单调递增
-func isValidBST(root *TreeNode) bool {
+func isValidBSTRecursion(root *TreeNode) bool {
 	// 第一次第一个节点比较
 	pre := math.MinInt
 	var dfs func(node *TreeNode) bool
@@ -131,6 +131,25 @@ func isValidBST(root *TreeNode) bool {
 		return dfs(node.Right)
 	}
 	return dfs(root)
+}
+
+func isValidBST(root *TreeNode) bool {
+	stack := []*TreeNode{}
+	inorder := math.MinInt64
+	for len(stack) > 0 || root != nil {
+		for root != nil {
+			stack = append(stack, root)
+			root = root.Left
+		}
+		root = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		if root.Val <= inorder {
+			return false
+		}
+		inorder = root.Val
+		root = root.Right
+	}
+	return true
 }
 
 // 230. 二叉搜索树中第K小的元素 中序列遍历，k--

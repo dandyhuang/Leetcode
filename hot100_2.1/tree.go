@@ -6,6 +6,15 @@ type TreeNode struct {
 	Val   int
 }
 
+// 94. 二叉树的中序遍历
+func inorderTraversal(root *TreeNode) []int {
+
+}
+
+// 94. 二叉树的前序遍历
+func preOrderTraversal(root *TreeNode) []int {
+}
+
 // 104. 二叉树的最大深度
 func maxDepth(root *TreeNode) int {
 }
@@ -15,6 +24,11 @@ func maxDepth(root *TreeNode) int {
 // 输出：3
 // 解释：3 ，取路径 [4,2,1,3] 或 [5,2,1,3] 的长度。
 func diameterOfBinaryTree(root *TreeNode) int {
+
+}
+
+// 226. 翻转二叉树
+func invertTree(root *TreeNode) *TreeNode {
 
 }
 

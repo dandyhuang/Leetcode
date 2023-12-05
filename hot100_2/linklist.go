@@ -312,10 +312,10 @@ func copyRandomList(head *Node) *Node {
 // 输入：head = [4,2,1,3]
 // 输出：[1,2,3,4]
 func sortList(head *ListNode) *ListNode {
-	if head == nil {
+	if head == nil || head.Next == nil {
 		return head
 	}
-	fast, slow := head, head.Next
+	slow, fast := head, head.Next
 	for fast != nil && fast.Next != nil {
 		slow = slow.Next
 		fast = fast.Next.Next
@@ -357,4 +357,9 @@ func sortList(head *ListNode) *ListNode {
 // ]
 // 23. 合并 K 个升序链表
 func mergeKLists(lists []*ListNode) *ListNode {
+	var res *ListNode
+	for i := range lists {
+		res = mergeTwoLists(res, lists[i])
+	}
+	return res
 }

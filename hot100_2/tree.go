@@ -6,8 +6,80 @@ type TreeNode struct {
 	Val   int
 }
 
+// 94. 二叉树的中序遍历
+func inorderTraversal(root *TreeNode) []int {
+	var res []int
+	stack := make([]*TreeNode, 0)
+	for root != nil || len(stack) > 0 {
+		for root != nil {
+			stack = append(stack, root)
+			root = root.Left
+		}
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		res = append(res, node.Val)
+		root = node.Right
+	}
+	return res
+}
+
+// 94. 二叉树的前序遍历
+func preOrderTraversal(root *TreeNode) []int {
+	var res []int
+	if root == nil {
+		return res
+	}
+	stack := make([]*TreeNode, 0)
+	stack = append(stack, root)
+	for len(stack) > 0 {
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		res = append(res, node.Val)
+		if node.Right != nil {
+			stack = append(stack, node.Right)
+		}
+		if node.Left != nil {
+			stack = append(stack, node.Left)
+		}
+	}
+	return res
+}
+
+// 94. 二叉树的后序遍历
+func postOrderTraversal(root *TreeNode) []int {
+	var res []int
+	if root == nil {
+		return res
+	}
+	stack := make([]*TreeNode, 0)
+	stack = append(stack, root)
+	for len(stack) > 0 {
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		res = append(res, node.Val)
+		if node.Left != nil {
+			stack = append(stack, node.Left)
+		}
+		if node.Right != nil {
+			stack = append(stack, node.Right)
+		}
+	}
+	for i, j := 0, len(res)-1; i < j; i, j = i+1, j-1 {
+		res[i], res[j] = res[j], res[i]
+	}
+	return res
+}
+
 // 104. 二叉树的最大深度
+// 输入：root = [3,9,20,null,null,15,7]
+// 输出：3
 func maxDepth(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	l := maxDepth(root.Left)
+	r := maxDepth(root.Right)
+	return max(l, r) + 1
 }
 
 // 543. 二叉树的直径 需要先理解二叉树的最大深度
@@ -15,18 +87,119 @@ func maxDepth(root *TreeNode) int {
 // 输出：3
 // 解释：3 ，取路径 [4,2,1,3] 或 [5,2,1,3] 的长度。
 func diameterOfBinaryTree(root *TreeNode) int {
+	res := 0
+	var maxDepth func(root *TreeNode) int
+	maxDepth = func(root *TreeNode) int {
+		if root == nil {
+			return 0
+		}
+		l := maxDepth(root.Left)
+		r := maxDepth(root.Right)
+		res = max(l+r+1, res)
+		return max(l, r) + 1
+	}
+	maxDepth(root)
+	// 因为处理的是边，所以要-1
+	return res - 1
+}
 
+// 226. 翻转二叉树
+func invertTree(root *TreeNode) *TreeNode {
+	if root == nil {
+		return root
+	}
+	queue := make([]*TreeNode, 0)
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		node := queue[len(queue)-1]
+		node.Left, node.Right = node.Right, node.Left
+		queue = queue[:len(queue)-1]
+		if node.Left != nil {
+			queue = append(queue, node.Left)
+		}
+		if node.Right != nil {
+			queue = append(queue, node.Right)
+		}
+	}
+	return root
 }
 
 // 101. 对称二叉树
 // 给你一个二叉树的根节点 root ， 检查它是否轴对称。
 func isSymmetric(root *TreeNode) bool {
+	queue := make([]*TreeNode, 0)
+	queue = append(queue, root, root)
+	for len(queue) > 0 {
+		l := queue[0]
+		r := queue[1]
+		queue = queue[2:]
+		if l == nil && r == nil {
+			continue
+		}
+		if l == nil || r == nil {
+			return false
+		}
 
+		if l.Val != r.Val {
+			return false
+		}
+		queue = append(queue, l.Left, r.Right)
+		queue = append(queue, l.Right, r.Left)
+	}
+	return true
+}
+
+func isSymmetricV1(root *TreeNode) bool {
+	queue := make([]*TreeNode, 0)
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		size := len(queue) - 1
+		if size == 0 {
+			node := queue[size]
+			queue = queue[:len(queue)]
+			queue = append(queue, node.Left, node.Right)
+			continue
+		}
+		l, r := 0, size
+		for l < r {
+			if queue[l] == nil && queue[r] == nil {
+				l++
+				r++
+				continue
+			}
+			if queue[l] == nil || queue[r] == nil {
+				return false
+			}
+			if queue[l].Val != queue[r].Val {
+				return false
+			}
+			// 全错
+			queue = append(queue, queue[l].Left, queue[r].Right)
+			queue = append(queue, queue[r].Left, queue[l].Right)
+		}
+	}
+	return true
 }
 
 // 101. 对称二叉树 递归
-func IssSymmetric(root *TreeNode) bool {
+func IsSymmetric(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+	return isMirror(root.Left, root.Right)
+}
 
+func isMirror(left *TreeNode, right *TreeNode) bool {
+	if left == nil && right == nil {
+		return true
+	}
+	if left == nil || right == nil {
+		return false
+	}
+	if left.Val != right.Val {
+		return false
+	}
+	return isMirror(left.Left, right.Right) && isMirror(left.Right, right.Left)
 }
 
 // 108. 将有序数组转换为二叉搜索树
@@ -35,6 +208,7 @@ func IssSymmetric(root *TreeNode) bool {
 // 输出：[0,-3,9,-10,null,5]
 // 解释：[0,-10,5,null,-3,null,9] 也将被视为正确答案：
 func sortedArrayToBST(nums []int) *TreeNode {
+
 }
 
 // 98. 验证二叉搜索树  中序便利，判断是否单调递增
@@ -138,17 +312,18 @@ func postorderTraversal(root *TreeNode) []int {
 }
 
 // InorderTraversal 中序遍历 左中右 没有过，明天继续写
-func inorderTraversal(root *TreeNode) (res []int) {
+func inOrderTraversal(root *TreeNode) []int {
 	var stack []*TreeNode
+	res := make([]int, 0)
 	for root != nil || len(stack) > 0 {
 		for root != nil {
 			stack = append(stack, root)
 			root = root.Left
 		}
-		root = stack[len(stack)-1]
+		node := stack[len(stack)-1]
 		stack = stack[:len(stack)-1]
-		res = append(res, root.Val)
-		root = root.Right
+		res = append(res, node.Val)
+		root = node.Right
 	}
 	return res
 }
