@@ -35,6 +35,14 @@ func IssSymmetric(root *TreeNode) bool {
 // 输出：[0,-3,9,-10,null,5]
 // 解释：[0,-10,5,null,-3,null,9] 也将被视为正确答案：
 func sortedArrayToBST(nums []int) *TreeNode {
+	if len(nums) == 0 {
+		return nil
+	}
+	mid := len(nums) / 2
+	root := &TreeNode{Val: nums[mid]}
+	root.Left = sortedArrayToBST(nums[:mid])
+	root.Right = sortedArrayToBST(nums[mid+1:])
+	return root
 }
 
 // 98. 验证二叉搜索树  中序便利，判断是否单调递增
@@ -60,7 +68,27 @@ func kthSmallestRecursion(root *TreeNode, k int) int {
 // 输入: [1,2,3,null,5,null,4]
 // 输出: [1,3,4]
 func rightSideView(root *TreeNode) []int {
-
+	res := make([]int, 0)
+	if root == nil {
+		return res
+	}
+	queue := make([]*TreeNode, 0)
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		size := len(queue)
+		for i := 0; i < size; i++ {
+			node := queue[i]
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+		}
+		res = append(res, queue[size-1].Val)
+		queue = queue[size:]
+	}
+	return res
 }
 
 // 199 递归
@@ -151,6 +179,24 @@ func inorderTraversal(root *TreeNode) (res []int) {
 		root = root.Right
 	}
 	return res
+}
+
+// 前序列遍历
+func preorderTraversal(root *TreeNode) []int {
+	var list []int
+	var stack []*TreeNode
+	node := root
+	for node != nil || len(stack) > 0 {
+		for node != nil {
+			list = append(list, node.Val)
+			stack = append(stack, node)
+			node = node.Left
+		}
+		node = stack[len(stack)-1]
+		node = node.Right
+		stack = stack[:len(stack)-1]
+	}
+	return list
 }
 
 // 层序遍历
