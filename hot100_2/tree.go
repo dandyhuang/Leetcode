@@ -1,5 +1,7 @@
 package hot100_2
 
+import "math"
+
 type TreeNode struct {
 	Left  *TreeNode
 	Right *TreeNode
@@ -21,6 +23,23 @@ func inorderTraversal(root *TreeNode) []int {
 		root = node.Right
 	}
 	return res
+}
+
+// 前序列遍历
+func preorderTraversal(root *TreeNode) []int {
+	var list []int
+	var stack []*TreeNode
+	for root != nil || len(stack) > 0 {
+		for root != nil {
+			list = append(list, root.Val)
+			stack = append(stack, root)
+			root = root.Left
+		}
+		node := stack[len(stack)-1]
+		root = node.Right
+		stack = stack[:len(stack)-1]
+	}
+	return list
 }
 
 // 94. 二叉树的前序遍历
@@ -149,6 +168,7 @@ func isSymmetric(root *TreeNode) bool {
 	return true
 }
 
+// XXXX错误示范
 func isSymmetricV1(root *TreeNode) bool {
 	queue := make([]*TreeNode, 0)
 	queue = append(queue, root)
@@ -224,7 +244,45 @@ func sortedArrayToBST(nums []int) *TreeNode {
 // - 节点的右子树只包含 大于 当前节点的数。
 // - 所有左子树和右子树自身必须也是二叉搜索树。
 func isValidBST(root *TreeNode) bool {
+	res := math.MinInt64
+	stack := make([]*TreeNode, 0)
+	for root != nil || len(stack) > 0 {
+		for root != nil {
+			stack = append(stack, root)
+			root = root.Left
+		}
+		node := stack[len(stack)-1]
+		if node.Val <= res {
+			return false
+		} else {
+			res = node.Val
+		}
+		stack = stack[:len(stack)-1]
+		root = node.Right
+	}
+	return true
+}
 
+// 98. 验证二叉搜索树  中序便利，判断是否单调递增
+func isValidBSTRecursion(root *TreeNode) bool {
+	// 第一次第一个节点比较
+	pre := math.MinInt64
+	var dfs func(node *TreeNode) bool
+	dfs = func(node *TreeNode) bool {
+		if node == nil {
+			return true
+		}
+		if !dfs(node.Left) {
+			return false
+		}
+		if node.Val <= pre {
+			return false
+		}
+		// 记录上一个节点
+		pre = node.Val
+		return dfs(node.Right)
+	}
+	return dfs(root)
 }
 
 // 230. 二叉搜索树中第K小的元素 中序列遍历，k--
@@ -353,24 +411,6 @@ func inOrderTraversal(root *TreeNode) []int {
 		root = node.Right
 	}
 	return res
-}
-
-// 前序列遍历
-func preorderTraversal(root *TreeNode) []int {
-	var list []int
-	var stack []*TreeNode
-	node := root
-	for node != nil || len(stack) > 0 {
-		for node != nil {
-			list = append(list, node.Val)
-			stack = append(stack, node)
-			node = node.Left
-		}
-		node = stack[len(stack)-1]
-		node = node.Right
-		stack = stack[:len(stack)-1]
-	}
-	return list
 }
 
 // 层序遍历
