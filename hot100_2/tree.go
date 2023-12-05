@@ -287,7 +287,24 @@ func isValidBSTRecursion(root *TreeNode) bool {
 
 // 230. 二叉搜索树中第K小的元素 中序列遍历，k--
 func kthSmallest(root *TreeNode, k int) int {
+	stack := make([]*TreeNode, 0)
+	res := -1
+	for root != nil || len(stack) > 0 {
+		for root != nil {
+			stack = append(stack, root)
+			root = root.Left
+		}
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		k--
+		if k == 0 {
+			res = node.Val
+			break
+		}
+		root = node.Right
 
+	}
+	return res
 }
 
 // 230 递归
