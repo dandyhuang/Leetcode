@@ -309,7 +309,22 @@ func kthSmallest(root *TreeNode, k int) int {
 
 // 230 递归
 func kthSmallestRecursion(root *TreeNode, k int) int {
-
+	res := 0
+	var dfs func(node *TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Left)
+		k--
+		if k == 0 {
+			res = node.Val
+			return
+		}
+		dfs(node.Right)
+	}
+	dfs(root)
+	return res
 }
 
 // 199. 二叉树的右视图 层序遍历取最右, 最右边输出
@@ -341,24 +356,80 @@ func rightSideView(root *TreeNode) []int {
 
 // 199 递归
 func rightSideViewRecursion(root *TreeNode) []int {
-
+	var dfs func(*TreeNode, int)
+	var res []int
+	dfs = func(node *TreeNode, depth int) {
+		if node == nil {
+			return
+		}
+		// 因为len(res)只塞一次
+		if depth == len(res) {
+			res = append(res, node.Val)
+		}
+		depth++
+		dfs(node.Right, depth)
+		dfs(node.Left, depth)
+	}
+	dfs(root, 0)
+	return res
 }
 
 // 114. 二叉树展开为链表
 // 输入：root = [1,2,5,3,4,null,6]
 // 输出：[1,null,2,null,3,null,4,null,5,null,6]
 func flatten(root *TreeNode) {
-
+	var res []*TreeNode
+	var dfs func(*TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		res = append(res, node)
+		dfs(node.Left)
+		dfs(node.Right)
+	}
+	dfs(root)
+	for i := range res {
+		if i+1 == len(res) {
+			break
+		}
+		res[i].Left = nil
+		res[i].Right = res[i+1]
+	}
 }
 
 // 114 二叉树展开为链表 递归
 func flattenRecursion(root *TreeNode) {
-
+	var dfs func(*TreeNode)
+	var pre *TreeNode
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Right)
+		dfs(node.Left)
+		node.Right = pre
+		node.Left = nil
+		pre = node
+	}
+	dfs(root)
 }
 
 // 105. 从前序与中序遍历序列构造二叉树
 func buildTree(preorder []int, inorder []int) *TreeNode {
-
+	if len(preorder) == 0 {
+		return nil
+	}
+	node := &TreeNode{Val: preorder[0]}
+	i := 0
+	for ; i < len(inorder); i++ {
+		if inorder[i] == preorder[0] {
+			break
+		}
+	}
+	node.Left = buildTree(preorder[1:i+1], inorder[:i])
+	node.Right = buildTree(preorder[i+1:], inorder[:i])
+	return node
 }
 
 // 106. 从中序与后序遍历序列构造二叉树
