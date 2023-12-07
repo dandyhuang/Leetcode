@@ -428,38 +428,136 @@ func buildTree(preorder []int, inorder []int) *TreeNode {
 		}
 	}
 	node.Left = buildTree(preorder[1:i+1], inorder[:i])
-	node.Right = buildTree(preorder[i+1:], inorder[:i])
+	node.Right = buildTree(preorder[i+1:], inorder[i+1:])
 	return node
 }
 
 // 106. 从中序与后序遍历序列构造二叉树
 func buildTreeIP(inorder []int, postorder []int) *TreeNode {
+	if len(inorder) == 0 || len(postorder) == 0 {
+		return nil
+	}
 
+	// 后序遍历的最后一个元素是树的根节点
+	root := &TreeNode{Val: postorder[len(postorder)-1]}
+
+	// 在中序遍历序列中找到根节点的位置
+	var rootIndex int
+	for i, val := range inorder {
+		if val == postorder[len(postorder)-1] {
+			rootIndex = i
+			break
+		}
+	}
+
+	// 递归构建左子树和右子树
+	root.Left = buildTreeIP(inorder[:rootIndex], postorder[:rootIndex])
+	root.Right = buildTreeIP(inorder[rootIndex+1:], postorder[rootIndex:len(postorder)-1])
+
+	return root
 }
 
-// 437. 路径总和 III 因为任何节点，都可以做为开始的节点
+// 437. 路径总和 III 因为任何节点，都可以做为开始的节点 太难了，搞不动
 // 输入：root = [10,5,-3,3,2,null,11,3,-2,null,1], targetSum = 8
 // 输出：3
 func pathSum(root *TreeNode, targetSum int) int {
+	if root == nil {
+		return 0
+	}
+	countFromRoot := findPath(root, targetSum)
+	// 以左子树为根节点继续递归查找
+	countFromLeft := pathSum(root.Left, targetSum)
+
+	// 以右子树为根节点继续递归查找
+	countFromRight := pathSum(root.Right, targetSum)
+	// 返回满足条件的路径总数
+	return countFromRoot + countFromLeft + countFromRight
+}
+
+func findPath(node *TreeNode, targetSum int) int {
+	if node == nil {
+		return 0
+	}
+	count := 0
+	if node.Val == targetSum {
+		count++
+	}
+	count += findPath(node.Left, targetSum-node.Val)
+	count += findPath(node.Right, targetSum-node.Val)
+	return count
 }
 
 // 112 路径总和
 // 给你二叉树的根节点 root 和一个表示目标和的整数 targetSum 。判断该树中是否存在 根节点到叶子节点 的路径，
 // 这条路径上所有节点值相加等于目标和 targetSum 。如果存在，返回 true ；否则，返回 false 。
 func hasPathSum(root *TreeNode, targetSum int) bool {
-
+	queue := make([]*TreeNode, 0)
+	res := make([]int, 0)
+	queue = append(queue, root)
+	res = append(res, root.Val)
+	for len(queue) > 0 {
+		size := len(queue)
+		for i := 0; i < size; i++ {
+			node := queue[i]
+			if node.Left == nil && node.Right == nil {
+				if res[i] == targetSum {
+					return true
+				}
+			}
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+				res = append(res, res[i]+node.Left.Val)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+				res = append(res, res[i]+node.Right.Val)
+			}
+		}
+		queue = queue[size:]
+		res = res[size:]
+	}
+	return false
 }
 
 // 236. 二叉树的最近公共祖先 体会后续遍历
 func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
-
+	if root == nil {
+		return root
+	}
+	if root == p || root == q {
+		return root
+	}
+	l := lowestCommonAncestor(root.Left, p, q)
+	r := lowestCommonAncestor(root.Right, p, q)
+	if l != nil && r == nil {
+		return l
+	} else if l == nil && r != nil {
+		return r
+	} else if l != nil && r != nil {
+		return root
+	} else {
+		return nil
+	}
 }
 
 // 124. 二叉树中的最大路径和
 // 二叉树中的 路径 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。同一个节点在一条路径序列中 至多出现一次 。
 // 该路径 至少包含一个 节点，且不一定经过根节点。
 func maxPathSum(root *TreeNode) int {
-
+	res := math.MinInt64
+	var dfs func(*TreeNode) int
+	dfs = func(node *TreeNode) int {
+		if node == nil {
+			return 0
+		}
+		l := dfs(node.Left)
+		r := dfs(node.Right)
+		sum := l + r + node.Val
+		res = max(res, sum)
+		return max(max(r+node.Val, l+node.Val), 0)
+	}
+	dfs(root)
+	return res
 }
 
 // 后序遍历，先序遍历反转

@@ -6,7 +6,13 @@ package hot100_2
 // 输出：
 // [[2,4], [3,4], [2,3],[1,2], [1,3], [1,4]]
 func combine(n int, k int) [][]int {
+	var res [][]int
+	var arr []int
+	var dfs func(start, n, k int, arr []int)
+	dfs = func(start, n, k int, arr []int) {
 
+	}
+	return res
 }
 
 // 46. 全排列
