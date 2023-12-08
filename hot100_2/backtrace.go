@@ -8,10 +8,20 @@ package hot100_2
 func combine(n int, k int) [][]int {
 	var res [][]int
 	var arr []int
-	var dfs func(start, n, k int, arr []int)
-	dfs = func(start, n, k int, arr []int) {
-
+	var dfs func(start int, arr []int)
+	dfs = func(start int, arr []int) {
+		if len(arr) == k {
+			var tmp []int
+			copy(tmp, arr)
+			res = append(res, tmp)
+		}
+		for i := start; i < start; i++ {
+			arr = append(arr, i)
+			dfs(start+1, arr)
+			arr = arr[:len(arr)-1]
+		}
 	}
+	dfs(1, arr)
 	return res
 }
 
@@ -19,7 +29,10 @@ func combine(n int, k int) [][]int {
 // 输入：nums = [1,2,3]
 // 输出：[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
 func permute(nums []int) [][]int {
+	var res [][]int
+	var arr []int
 
+	return res
 }
 
 // 78. 子集
