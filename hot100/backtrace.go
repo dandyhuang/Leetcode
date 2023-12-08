@@ -152,6 +152,8 @@ func generateParenthesis(n int) []string {
 }
 
 // 79. 单词搜索 和岛屿数量是一样的
+// 输入：board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
+// 输出：true
 func exist(board [][]byte, word string) bool {
 	rows := len(board)
 	cols := len(board[0])

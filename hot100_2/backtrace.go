@@ -19,17 +19,49 @@ func combine(n int, k int) [][]int {
 // 输入：nums = [1,2,3]
 // 输出：[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
 func permute(nums []int) [][]int {
-
+	var res [][]int
+	var arr []int
+	n := len(nums)
+	used := make([]int, n+1)
+	var dfs func(arr []int)
+	dfs = func(arr []int) {
+		if len(arr) == n {
+			tmp := make([]int, len(arr))
+			copy(tmp, arr)
+			res = append(res, tmp)
+			return
+		}
+		for i := 0; i < n; i++ {
+			if used[i] == 1 {
+				continue
+			}
+			used[i] = 1
+			arr = append(arr, nums[i])
+			dfs(arr)
+			arr = arr[:len(arr)-1]
+			used[i] = 0
+		}
+	}
+	dfs(arr)
+	return res
 }
 
 // 78. 子集
 // 输入：nums = [1,2,3]
 // 输出：[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
 func subsets(nums []int) [][]int {
+	var res [][]int
 
 }
 
-// 39. 组合总和 很难理解的，i为index
+// 90. 子集 II
+// 输入：nums = [1,2,2]
+// 输出：[[],[1],[1,2],[1,2,2],[2],[2,2]]
+func subsetsWithDup(nums []int) [][]int {
+
+}
+
+// 39. 组合总和
 // 输入：candidates = [2,3,6,7], target = 7
 // 输出：[[2,2,3],[7]]
 func combinationSum(candidates []int, target int) [][]int {
