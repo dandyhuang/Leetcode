@@ -114,20 +114,45 @@ func combine(n int, k int) [][]int {
 // 39. 组合总和
 // 输入：candidates = [2,3,6,7], target = 7
 // 输出：[[2,2,3],[7]]
-func combinationSum(candidates []int, target int) [][]int {
-	sum := 0
+func combinationSum(nums []int, target int) [][]int {
 	var arr []int
 	var res [][]int
-	var dfs func(arr []int)
-	dfs = func(arr []int) {
-
-		for i := 0; i < len(candidates); i++ {
-
+	var dfs func(sum, start int, arr []int)
+	dfs = func(sum, start int, arr []int) {
+		if sum > target {
+			return
+		}
+		if sum == target {
+			res = append(res, append([]int{}, arr...))
+			return
+		}
+		for i := start; i < len(nums); i++ {
+			arr = append(arr, nums[i])
+			// 这里因为可以重复，从i开始
+			dfs(sum+nums[i], i, arr)
+			arr = arr[:len(arr)-1]
 		}
 		return
 	}
-	dfs(arr)
+	dfs(0, 0, arr)
 	return res
+}
+
+// 17. 电话号码的字母组合
+// 输入：digits = "23"
+// 输出：["ad","ae","af","bd","be","bf","cd","ce","cf"]
+func letterCombinations(digits string) []string {
+	m := map[byte]string{
+		'2': "abc",
+		'3': "def",
+		'4': "ghi",
+		'5': "jkl",
+		'6': "mno",
+		'7': "pqrs",
+		'8': "tuv",
+		'9': "wxyz",
+	}
+
 }
 
 // 22. 括号生成 太抽象了

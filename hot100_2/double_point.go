@@ -23,6 +23,36 @@ func min(a, b int) int {
 	return b
 }
 
+// 88. 合并两个有序数组
+// 输入：nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3
+// 输出：[1,2,2,3,5,6]
+// 解释：需要合并 [1,2,3] 和 [2,5,6] 。
+// 合并结果是 [1,2,2,3,5,6] ，其中斜体加粗标注的为 nums1 中的元素。
+func mergeArray(nums1 []int, m int, nums2 []int, n int) {
+	r1, r2 := m-1, n-1
+	size := m + n - 1
+	for r1 >= 0 && r2 >= 0 {
+		if nums1[r1] > nums2[r2] {
+			nums1[size] = nums1[r1]
+			r1--
+		} else {
+			nums1[size] = nums2[r2]
+			r2--
+		}
+		size--
+	}
+	for r1 >= 0 {
+		nums1[size] = nums1[r1]
+		r1--
+		size--
+	}
+	for r2 >= 0 {
+		nums1[size] = nums2[r2]
+		r2--
+		size--
+	}
+}
+
 // 11. 盛最多水的容器
 // 输入：[1,8,6,2,5,4,8,3,7]
 // 输出：49 7*7
