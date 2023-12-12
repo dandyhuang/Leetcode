@@ -12,6 +12,8 @@ func DeferLoopV20() {
 }
 
 func main() {
+	arr := []int{0, 1, 2, 3, 4, 6}
+	fmt.Println(arr[0:2])
 	DeferLoopV20()
 	prerequisites := [][]int{{1, 3}, {2, 4}}
 	graph := make(map[int][]int, 2)

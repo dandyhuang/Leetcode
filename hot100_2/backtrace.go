@@ -142,6 +142,10 @@ func combinationSum(nums []int, target int) [][]int {
 // 输入：digits = "23"
 // 输出：["ad","ae","af","bd","be","bf","cd","ce","cf"]
 func letterCombinations(digits string) []string {
+	var res []string
+	if digits == "" {
+		return res
+	}
 	m := map[byte]string{
 		'2': "abc",
 		'3': "def",
@@ -152,33 +156,183 @@ func letterCombinations(digits string) []string {
 		'8': "tuv",
 		'9': "wxyz",
 	}
-
+	var arr []byte
+	var dfs func(start int, arr []byte)
+	dfs = func(start int, arr []byte) {
+		if len(arr) == len(digits) {
+			tmp := make([]byte, len(arr))
+			copy(tmp, arr)
+			res = append(res, string(tmp))
+			return
+		}
+		letters := m[digits[start]]
+		for i := 0; i < len(letters); i++ {
+			arr = append(arr, letters[i])
+			dfs(start+1, arr)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(0, arr)
+	return res
 }
 
-// 22. 括号生成 太抽象了
+// 22. 括号生成
 // 输入：n = 3
 // 输出：["((()))","(()())","(())()","()(())","()()()"]
 func generateParenthesis(n int) []string {
-
+	var res []string
+	var s []byte
+	var dfs func(l, r int, s []byte)
+	dfs = func(l, r int, s []byte) {
+		if l == n && r == n {
+			tmp := make([]byte, len(s))
+			copy(tmp, s)
+			res = append(res, string(s))
+			return
+		}
+		if l < n {
+			s = append(s, '(')
+			dfs(l+1, r, s)
+			s = s[:len(s)-1]
+		}
+		if r < l {
+			s = append(s, ')')
+			dfs(l, r+1, s)
+			s = s[:len(s)-1]
+		}
+	}
+	dfs(0, 0, s)
+	return res
 }
-
-// 79. 单词搜索 和岛屿数量是一样的
-// 输入：board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
-// 输出：true
-func exist(board [][]byte, word string) bool {
-
+func isPalindromeStr(str string) bool {
+	l, r := 0, len(str)-1
+	for l < r {
+		if str[l] != str[r] {
+			return false
+		}
+		l++
+		r--
+	}
+	return true
 }
 
 // 131. 分割回文串
 // 输入：s = "aab"
 // 输出：[["a","a","b"],["aa","b"]]
 func partition(s string) [][]string {
-
+	var res [][]string
+	var arr []string
+	var dfs func(start int, arr []string)
+	dfs = func(start int, arr []string) {
+		if start == len(s) {
+			res = append(res, append([]string{}, arr...))
+		}
+		for i := start; i < len(s); i++ {
+			if isPalindromeStr(s[start : i+1]) {
+				arr = append(arr, s[start:i+1])
+				dfs(i+1, arr)
+				arr = arr[:len(arr)-1]
+			}
+		}
+	}
+	dfs(0, arr)
+	return res
 }
 
-// 51. N 皇后
+// 79. 单词搜索 和岛屿数量是一样的 pass
+// 输入：board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
+// 输出：true
+func exist(board [][]byte, word string) bool {
+	rows := len(board)
+	cols := len(board[0])
+	visited := make([][]bool, rows)
+	for i := 0; i < rows; i++ {
+		visited[i] = make([]bool, cols)
+	}
+	var dfs func(board [][]byte, word string, row, col, rows, cols, index int, visited [][]bool) bool
+	dfs = func(board [][]byte, word string, row, col, rows, cols, index int, visited [][]bool) bool {
+		if index == len(word) {
+			return true
+		}
+		if row < 0 || row >= rows || col < 0 || col >= cols ||
+			visited[row][col] || board[row][col] != word[index] {
+			return false
+		}
+		visited[row][col] = true
+		if dfs(board, word, row+1, col, rows, cols, index+1, visited) ||
+			dfs(board, word, row-1, col, rows, cols, index+1, visited) ||
+			dfs(board, word, row, col+1, rows, cols, index+1, visited) ||
+			dfs(board, word, row, col-1, rows, cols, index+1, visited) {
+			return true
+		}
+		visited[row][col] = false
+		return false
+	}
+	for i := 0; i < len(board); i++ {
+		for j := 0; j < len(board[0]); j++ {
+			if dfs(board, word, i, j, rows, cols, 0, visited) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// 51. N 皇后 pass
 // 输入：n = 4
 // 输出：[[".Q..","...Q","Q...","..Q."],["..Q.","Q...","...Q",".Q.."]]
 func isQueens(row, col int, arr [][]byte) bool {
+	n := len(arr)
+	// 检查同一列是否有皇后
+	// 因为我们是每行每行的放置，因此当前行数以下都没有放置皇后所以扫描当前行数以上的就行了
+	for i := 0; i < row; i++ {
+		if arr[i][col] == 'Q' {
+			return false
+		}
+	}
+	// 检查左上方是否有皇后, 以下都还没放,后续增加也会检查到
+	for i, j := row-1, col-1; i >= 0 && j >= 0; i, j = i-1, j-1 {
+		if arr[i][j] == 'Q' {
+			return false
+		}
+	}
 
+	// 检查右上方是否有皇后
+	for i, j := row-1, col+1; i >= 0 && j < n; i, j = i-1, j+1 {
+		if arr[i][j] == 'Q' {
+			return false
+		}
+	}
+	return true
+}
+func solveNQueens(n int) [][]string {
+	var res [][]string
+	arr := make([][]byte, n)
+	for i := 0; i < len(arr); i++ {
+		arr[i] = make([]byte, n)
+		for j := 0; j < len(arr[i]); j++ {
+			arr[i][j] = '.'
+		}
+	}
+
+	var dfs func(n, row int)
+	dfs = func(n, row int) {
+		if row == n {
+			tmp := make([]string, 0)
+			for i := 0; i < n; i++ {
+				tmp = append(tmp, string(arr[i]))
+			}
+			res = append(res, tmp)
+		}
+		for col := 0; col < n; col++ {
+			if isQueens(row, col, arr) {
+				arr[row][col] = 'Q'
+				// 递归每一行
+				dfs(n, row+1)
+				arr[row][col] = '.'
+			}
+		}
+	}
+	dfs(n, 0)
+	return res
 }
