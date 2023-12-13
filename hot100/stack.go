@@ -45,9 +45,11 @@ func decodeString(s string) string {
 			num = 0
 		} else if char == ']' {
 			preRes := stack[len(stack)-1]
+			// 去除之前叠加的数据
 			stack = stack[:len(stack)-1]
 			times, _ := strconv.Atoi(stack[len(stack)-1])
 			stack = stack[:len(stack)-1]
+			// 叠加历史的数据
 			res = preRes + strings.Repeat(res, times)
 		} else {
 			res += string(char)

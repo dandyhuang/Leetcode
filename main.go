@@ -12,6 +12,9 @@ func DeferLoopV20() {
 }
 
 func main() {
+	var s string
+	s = "dsdfdsfsd"
+	fmt.Println(s[1])
 	arr := []int{0, 1, 2, 3, 4, 6}
 	fmt.Println(arr[0:2])
 	DeferLoopV20()

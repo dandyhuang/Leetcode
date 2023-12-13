@@ -5,13 +5,13 @@ package hot100_2
 // 输入：s = "()[]{}"
 // 输出：true
 func isValid(s string) bool {
-
 }
 
 // 394. 字符串解码
 // 输入：s = "3[a]2[bc]"
 // 输出："aaabcbc"
 func decodeString(s string) string {
+
 }
 
 // 739. 每日温度
@@ -20,6 +20,7 @@ func decodeString(s string) string {
 // 输入: temperatures = [73,74,75,71,69,72,76,73]
 // 输出: [1,1,4,2,1,1,0,0]
 func dailyTemperatures(T []int) []int {
+
 }
 
 // 84. 柱状图中最大的矩形 和每日温度刚好相反
