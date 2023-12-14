@@ -1,17 +1,56 @@
 package hot100_2
 
+import "strconv"
+
 // 20. 有效的括号
 // 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
 // 输入：s = "()[]{}"
 // 输出：true
 func isValid(s string) bool {
+	stack := make([]rune, 0)
+	m := map[rune]rune{
+		')': '(',
+		'}': '{',
+		']': '[',
+	}
+	for _, str := range s {
+		if v, ok := m[str]; ok {
+			if len(stack) > 0 && stack[len(stack)-1] == v {
+				stack = stack[:len(stack)-1]
+			} else {
+				return false
+			}
+		} else {
+			stack = append(stack, str)
+		}
+	}
+	return len(stack) == 0
 }
 
 // 394. 字符串解码
 // 输入：s = "3[a]2[bc]"
 // 输出："aaabcbc"
 func decodeString(s string) string {
+	var res string
+	stack := make([]string, 0)
+	num := 0
+	for _, str := range s {
+		if str >= '0' && str <= '9' {
+			num = num*10 + int(str-'0')
+		} else if str == '[' {
+			stack = append(stack, strconv.Itoa(num), res)
+			num = 0
+			res = ""
+		} else if str == ']' {
+			preStr := stack[:len(stack)-1]
+			num := stack[:len(stack)-2]
+			stack = stack[:len(stack)-2]
 
+		} else {
+			res += string(str)
+		}
+	}
+	return res
 }
 
 // 739. 每日温度
