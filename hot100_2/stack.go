@@ -43,7 +43,7 @@ func decodeString(s string) string {
 			res = ""
 		} else if str == ']' {
 			preStr := stack[:len(stack)-1]
-			num := stack[:len(stack)-2]
+			size := stack[len(stack)-2]
 			stack = stack[:len(stack)-2]
 
 		} else {
@@ -59,7 +59,17 @@ func decodeString(s string) string {
 // 输入: temperatures = [73,74,75,71,69,72,76,73]
 // 输出: [1,1,4,2,1,1,0,0]
 func dailyTemperatures(T []int) []int {
-
+	res := make([]int, len(T))
+	stack := make([]int, 0)
+	for i := range T {
+		for len(stack) > 0 && T[stack[len(stack)-1]] < T[i] {
+			index := stack[len(stack)-1]
+			res[index] = i - index
+			stack = stack[:len(stack)-1]
+		}
+		stack = append(stack, i)
+	}
+	return res
 }
 
 // 84. 柱状图中最大的矩形 和每日温度刚好相反
@@ -67,5 +77,19 @@ func dailyTemperatures(T []int) []int {
 // 输出：10
 // 当前栈，左右两边，找到最小值
 func largestRectangleArea(heights []int) int {
-
+	res := 0
+	stack := make([]int, 0)
+	heights = append([]int{0}, heights...)
+	heights = append(heights, 0)
+	for i := range heights {
+		for len(stack) > 0 && heights[stack[len(stack)-1]] > heights[i] {
+			cur := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			l := stack[len(stack)-1] + 1
+			r := i - 1
+			res = max(res, (r-l+1)*heights[cur])
+		}
+		stack = append(stack, i)
+	}
+	return res
 }
