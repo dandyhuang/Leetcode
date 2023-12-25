@@ -34,7 +34,7 @@ func generate(numRows int) [][]int {
 // 198. 打家劫舍
 func rob(nums []int) int {
 	if len(nums) == 1 {
-		return nums[1]
+		return nums[0]
 	} else if len(nums) == 2 {
 		return max(nums[1], nums[0])
 	}
@@ -262,6 +262,7 @@ func maxSubArrayV1(nums []int) int {
 // 输出: 6
 // 解释: 子数组 [2,3] 有最大乘积 6。
 func maxProduct(nums []int) int {
+	// 由于存在负数，需要同时维护最大值和最小值
 	dpMax := make([]int, len(nums)+1)
 	dpMin := make([]int, len(nums)+1)
 	res := nums[0]
@@ -310,7 +311,7 @@ func canPartition(nums []int) bool {
 // 32. 最长有效括号
 // 输入：s = "(()(())"
 // 输出：6
-// 解释：最长有效括号子串是 "()()"
+// 解释：最长有效括号子串是 "()(())"
 func longestValidParentheses(s string) int {
 	n := len(s)
 	if n < 2 {

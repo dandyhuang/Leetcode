@@ -83,13 +83,11 @@ func largestRectangleArea(heights []int) int {
 	heights = append(heights, 0)
 	for i := range heights {
 		for len(stack) > 0 && heights[stack[len(stack)-1]] > heights[i] {
-			cur := stack[len(stack)-1]
+			h := heights[stack[len(stack)-1]]
 			stack = stack[:len(stack)-1]
-			// 找左边比它小的
 			l := stack[len(stack)-1] + 1
-			// 找右边比它小的
 			r := i - 1
-			res = max(res, (r-l+1)*heights[cur])
+			res = max(res, (r-l+1)*h)
 		}
 		stack = append(stack, i)
 	}

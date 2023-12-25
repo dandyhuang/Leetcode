@@ -1,5 +1,7 @@
 package hot100_2
 
+import "math"
+
 type TreeNode struct {
 	Left  *TreeNode
 	Right *TreeNode
@@ -126,7 +128,21 @@ func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 // 二叉树中的 路径 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。同一个节点在一条路径序列中 至多出现一次 。
 // 该路径 至少包含一个 节点，且不一定经过根节点。
 func maxPathSum(root *TreeNode) int {
-
+	res := math.MinInt
+	var dfs func(node *TreeNode) int
+	dfs = func(node *TreeNode) int {
+		if node == nil {
+			return 0
+		}
+		l := dfs(node.Left)
+		r := dfs(node.Right)
+		sum := l + r + node.Val
+		res = max(res, sum)
+		maxSum := node.Val + max(l, r)
+		return max(maxSum, 0)
+	}
+	dfs(root)
+	return res
 }
 
 // 后序遍历，先序遍历反转
