@@ -235,6 +235,7 @@ func swapPairs(head *ListNode) *ListNode {
 		next := cur.Next
 		pre.Next = next
 		cur.Next = next.Next
+
 		q := next.Next
 		next.Next = cur
 		pre = cur

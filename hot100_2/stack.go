@@ -1,6 +1,9 @@
 package hot100_2
 
-import "strconv"
+import (
+	"strconv"
+	"strings"
+)
 
 // 20. 有效的括号
 // 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
@@ -31,23 +34,28 @@ func isValid(s string) bool {
 // 输入：s = "3[a]2[bc]"
 // 输出："aaabcbc"
 func decodeString(s string) string {
-	var res string
 	stack := make([]string, 0)
 	num := 0
-	for _, str := range s {
-		if str >= '0' && str <= '9' {
-			num = num*10 + int(str-'0')
-		} else if str == '[' {
+	res := ""
+	for _, char := range s {
+		if char >= '0' && char <= '9' {
+			num = num*10 + int(char-'0')
+		} else if char == '[' {
+			// 保存原来的字符串
 			stack = append(stack, strconv.Itoa(num), res)
-			num = 0
+			// 留给后续构造使用
 			res = ""
-		} else if str == ']' {
-			preStr := stack[:len(stack)-1]
-			size := stack[len(stack)-2]
-			stack = stack[:len(stack)-2]
-
+			num = 0
+		} else if char == ']' {
+			preRes := stack[len(stack)-1]
+			// 去除之前叠加的数据
+			stack = stack[:len(stack)-1]
+			times, _ := strconv.Atoi(stack[len(stack)-1])
+			stack = stack[:len(stack)-1]
+			// 叠加历史的数据
+			res = preRes + strings.Repeat(res, times)
 		} else {
-			res += string(str)
+			res += string(char)
 		}
 	}
 	return res

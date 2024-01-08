@@ -20,6 +20,9 @@ func decodeString(s string) string {
 // 输入: temperatures = [73,74,75,71,69,72,76,73]
 // 输出: [1,1,4,2,1,1,0,0]
 func dailyTemperatures(T []int) []int {
+	queue := make([]int, 0)
+	queue = append(queue, T[0])
+
 }
 
 // 84. 柱状图中最大的矩形 和每日温度刚好相反
