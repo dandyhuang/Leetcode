@@ -41,7 +41,44 @@ func generateParenthesis(n int) []string {
 // 输入：board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
 // 输出：true
 func exist(board [][]byte, word string) bool {
+	rows := len(board)
+	cols := len(board[0])
+	var dfs func(row, col, index int) bool
+	dfs = func(row, col, index int) bool {
+		if row >= rows || row < 0 || col >= cols || col < 0 {
+			return false
+		}
+		// 匹配上了
+		if board[row][col] == word[index] && index == len(word)-1 {
+			return true
+		}
 
+		// 匹配不上
+		if board[row][col] != word[index] {
+			return false
+		}
+		// 清空当前查找
+		tmp := board[row][col]
+		board[row][col] = 0
+		// 继续搜索
+		if dfs(row+1, col, index+1) ||
+			dfs(row-1, col, index+1) ||
+			dfs(row, col+1, index+1) ||
+			dfs(row, col-1, index+1) {
+			return true
+		}
+		// 恢复查找，提供后续使用
+		board[row][col] = tmp
+		return false
+	}
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			if dfs(i, j, 0) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // 131. 分割回文串

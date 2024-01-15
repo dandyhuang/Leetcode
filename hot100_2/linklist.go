@@ -364,3 +364,40 @@ func mergeKLists(lists []*ListNode) *ListNode {
 	}
 	return res
 }
+
+// 给定链表 1 -> 2 -> ... -> n-1 -> n，使用 O(1) 空间复杂度使其变为 1 -> n -> 2 -> n-1 -> ...
+// 1 找到链表中点： 使用快慢指针找到链表的中点。
+// 2 反转后半部分链表： 反转链表的后半部分。
+// 3 合并两个链表： 将前半部分链表和反转后的后半部分链表合并。
+func reorderList(head *ListNode) {
+	if head == nil || head.Next == nil {
+		return
+	}
+	slow, fast := head, head.Next
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+	revert := func(node *ListNode) *ListNode {
+		var dummy *ListNode
+		for cur := node; cur != nil; {
+			next := cur.Next
+			cur.Next = dummy
+			dummy = cur
+			cur = next
+		}
+		return dummy
+	}
+	next := revert(slow)
+	// mergeTwoLists(head, next)
+	for head != nil && next != nil {
+		l1Next := head.Next
+		l2Next := next.Next
+
+		head.Next = next
+		head = l1Next
+
+		next.Next = head
+		next = l2Next
+	}
+}
