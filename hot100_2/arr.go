@@ -72,24 +72,17 @@ func rotate(nums []int, k int) {
 // 输入: nums = [1,2,3,4]
 // 输出: [24,12,8,6]
 func productExceptSelf(nums []int) []int {
-	n := len(nums)
-	res := make([]int, n)
-	lPlus := make([]int, n)
-	rPlus := make([]int, n)
-
-	for i := 0; i < n; i++ {
-		if i == 0 {
-			lPlus[0] = 1
-		} else {
-			lPlus[i] = lPlus[i-1] * nums[i-1]
-		}
+	res := make([]int, len(nums))
+	lPlus, rPlus := make([]int, len(nums)), make([]int, len(nums))
+	plus := 1
+	for i := range nums {
+		lPlus[i] = plus
+		plus *= nums[i]
 	}
-	for j := n - 1; j >= 0; j-- {
-		if j == n-1 {
-			rPlus[j] = 1
-		} else {
-			rPlus[j] = rPlus[j+1] * nums[j+1]
-		}
+	plus = 1
+	for i := len(nums) - 1; i >= 0; i-- {
+		rPlus[i] = plus
+		plus *= nums[i]
 	}
 	for i := 0; i < len(nums); i++ {
 		res[i] = lPlus[i] * rPlus[i]

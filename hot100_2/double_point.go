@@ -1,6 +1,8 @@
 package hot100_2
 
-import "sort"
+import (
+	"sort"
+)
 
 // 283. 移动零
 // 输入: nums = [0,1,0,3,12]
@@ -122,6 +124,9 @@ func threeSum(nums []int) [][]int {
 // 输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
 // 输出：6
 // 解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。
+// 对于下标 i下雨后水能到达的最大高度等于下标 i两边的最大高度的最小值，
+// 下标 i处能接的雨水量等于下标 i处的水能到达的最大高度减去 height[i]。
+// 纵向接雨水
 func trap(height []int) int {
 	n := len(height)
 	lHeight := make([]int, n)
@@ -169,4 +174,29 @@ func trapV2(height []int) int {
 	}
 
 	return result
+}
+
+// 横向接雨水
+// 输入：height = [5,4,2,6,1,0]
+// 输出：6
+// 解释：上面是由数组 [6] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。
+// 找上一个更大元素，在找的过程中填坑，灵神出版https://www.bilibili.com/video/BV1VN411J7S7/?vd_source=601fac537a0633b7cf3313f0a02ed170
+func trapV3(height []int) int {
+	var res = 0
+	var stack []int
+	for i, h := range height {
+		// 相同的时候，也可以进入直接删除就可以了。
+		for len(stack) > 0 && height[stack[len(stack)-1]] <= height[i] {
+			bottomH := height[stack[len(stack)-1]]
+			stack = stack[:len(stack)-1]
+			if len(stack) == 0 {
+				break
+			}
+			wide := i - stack[len(stack)-1] - 1
+			leftHeight := min(h, height[stack[len(stack)-1]]) - bottomH
+			res += leftHeight * wide
+		}
+		stack = append(stack, i)
+	}
+	return res
 }

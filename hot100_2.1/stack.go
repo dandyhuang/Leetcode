@@ -20,6 +20,16 @@ func decodeString(s string) string {
 // 输入: temperatures = [73,74,75,71,69,72,76,73]
 // 输出: [1,1,4,2,1,1,0,0]
 func dailyTemperatures(T []int) []int {
+	res := make([]int, len(T))
+	queue := make([]int, 0)
+	for i := 0; i < len(T); i++ {
+		for len(queue) > 0 && T[queue[len(queue)-1]] < T[i] {
+			res[queue[len(queue)-1]] = i - queue[len(queue)-1]
+			queue = queue[:len(queue)-1]
+		}
+		queue = append(queue, i)
+	}
+	return res
 }
 
 // 84. 柱状图中最大的矩形 和每日温度刚好相反
@@ -27,5 +37,6 @@ func dailyTemperatures(T []int) []int {
 // 输出：10
 // 当前栈，左右两边，找到最小值
 func largestRectangleArea(heights []int) int {
+	heights = append(heights, 0)
 
 }

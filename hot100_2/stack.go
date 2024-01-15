@@ -1,6 +1,9 @@
 package hot100_2
 
-import "strconv"
+import (
+	"strconv"
+	"strings"
+)
 
 // 20. 有效的括号
 // 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
@@ -31,23 +34,28 @@ func isValid(s string) bool {
 // 输入：s = "3[a]2[bc]"
 // 输出："aaabcbc"
 func decodeString(s string) string {
-	var res string
 	stack := make([]string, 0)
 	num := 0
-	for _, str := range s {
-		if str >= '0' && str <= '9' {
-			num = num*10 + int(str-'0')
-		} else if str == '[' {
+	res := ""
+	for _, char := range s {
+		if char >= '0' && char <= '9' {
+			num = num*10 + int(char-'0')
+		} else if char == '[' {
+			// 保存原来的字符串
 			stack = append(stack, strconv.Itoa(num), res)
-			num = 0
+			// 留给后续构造使用
 			res = ""
-		} else if str == ']' {
-			preStr := stack[:len(stack)-1]
-			size := stack[len(stack)-2]
-			stack = stack[:len(stack)-2]
-
+			num = 0
+		} else if char == ']' {
+			preRes := stack[len(stack)-1]
+			// 去除之前叠加的数据
+			stack = stack[:len(stack)-1]
+			times, _ := strconv.Atoi(stack[len(stack)-1])
+			stack = stack[:len(stack)-1]
+			// 叠加历史的数据
+			res = preRes + strings.Repeat(res, times)
 		} else {
-			res += string(str)
+			res += string(char)
 		}
 	}
 	return res
@@ -76,12 +84,23 @@ func dailyTemperatures(T []int) []int {
 // 输入：heights = [2,1,5,6,2,3]
 // 输出：10
 // 当前栈，左右两边，找到最小值
+// 比如我图中，当栈里是 1 5 6 这三个数时，此时 索引 i 代表的数是 2 ，触发计算。
+// 此时第一次计算是因为 栈顶 6 比 2 大。所以出栈 6 ，6 为矩形的 h ，意思就是计算高度为 6 的矩形面积。
+// 所以 left 就是出栈之后 5 的右边开始算起，5 不能包含在内。
+// right 就是 i - 1 ，就是 2 的左边。
+// 宽度计算完就是 1 格，高度 6 。
+// 接下来，会对比栈顶 5 ，与 2 比较也会出栈。
+// 此时要计算是高度为 5 的矩形。
+// left 是 1 的右边。
+// right 还是 i - 1，2 的左边。 宽度 2 ， 高度 5 。
 func largestRectangleArea(heights []int) int {
 	res := 0
 	stack := make([]int, 0)
+	// 第一个0是为了计算left的值
 	heights = append([]int{0}, heights...)
 	heights = append(heights, 0)
 	for i := range heights {
+		// 如果是2，1，2的场景是怎么计算的呢
 		for len(stack) > 0 && heights[stack[len(stack)-1]] > heights[i] {
 			h := heights[stack[len(stack)-1]]
 			stack = stack[:len(stack)-1]
