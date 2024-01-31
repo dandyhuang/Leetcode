@@ -1,10 +1,5 @@
 package hot100_2
 
-import (
-	"fmt"
-	"math"
-)
-
 func max(a, b int) int {
 	if a > b {
 		return a
@@ -76,19 +71,11 @@ func numSquares(n int) int {
 // amount = 3 , coins = [2]
 func coinChange(coins []int, amount int) int {
 	dp := make([]int, amount+1)
-	for i := 1; i <= amount; i++ {
-		dp[i] = math.MaxInt32
-		for j := range coins {
-			if i-coins[j] >= 0 {
-				dp[i] = min(dp[i], dp[i-coins[j]]+1)
-			}
-			fmt.Println(dp[i], i, j)
+	for i := range coins {
+		for j := amount; j > 0; j-- {
+			dp[j] = min(dp[j], dp[j-1]+1)
 		}
 	}
-	if dp[amount] == math.MaxInt32 {
-		return -1
-	}
-	return dp[amount]
 }
 
 // 139. 单词拆分
@@ -105,12 +92,7 @@ func wordBreak(s string, wordDict []string) bool {
 	dp := make([]bool, len(s)+1)
 	dp[0] = true
 	for i := 1; i <= len(s); i++ {
-		for j := 0; j < i; j++ {
-			if dp[j] && wordMap[s[j:i]] {
-				dp[i] = true
-				break
-			}
-		}
+
 	}
 	return dp[len(s)]
 }

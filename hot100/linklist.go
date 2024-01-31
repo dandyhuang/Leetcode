@@ -384,3 +384,147 @@ func mergeKLists(lists []*ListNode) *ListNode {
 	}
 	return res
 }
+
+// NodeList 146. LRU 缓存
+type NodeList struct {
+	// 双向链表
+	pre, next *NodeList
+	k, v      int
+}
+
+type LRUCache struct {
+	capacity, size int
+	head, tail     *NodeList
+	h              map[int]*NodeList
+}
+
+func Constructor(capacity int) LRUCache {
+	lru := LRUCache{capacity: capacity}
+	lru.head = &NodeList{}
+	lru.tail = &NodeList{}
+	lru.head.next = lru.tail
+	lru.tail.pre = lru.head
+	lru.h = make(map[int]*NodeList, 0)
+	return lru
+}
+
+func (l *LRUCache) Put(key, value int) {
+	if v, ok := l.h[key]; ok {
+		v.v = value
+		l.h[key] = v
+		l.RemoveNode(v)
+		l.AddNode(v)
+	} else {
+		if l.capacity == l.size {
+			node := l.tail.pre
+			delete(l.h, node.k)
+			l.RemoveNode(node)
+			l.size--
+		}
+		node := &NodeList{
+			k: key,
+			v: value,
+		}
+		l.AddNode(node)
+		l.h[key] = node
+		l.size++
+	}
+}
+
+func (l *LRUCache) Get(key int) int {
+	if v, ok := l.h[key]; ok {
+		l.RemoveNode(v)
+		l.AddNode(v)
+		return v.v
+	}
+	return -1
+}
+func (l *LRUCache) AddNode(node *NodeList) {
+	node.pre = l.head
+	node.next = l.head.next
+	l.head.next.pre = node
+	l.head.next = node
+}
+func (l *LRUCache) RemoveNode(node *NodeList) {
+	node.pre.next = node.next
+	node.next.pre = node.pre
+}
+
+/*
+struct Node {
+    // 双向链表
+    Node* pre, *next;
+    int key, val;
+    Node():key(0), val(0),pre(nullptr), next(nullptr) {}
+    Node(int key, int val):key(key), val(val),pre(nullptr), next(nullptr) {}
+};
+class LRUCache {
+public:
+    LRUCache(int capacity) {
+        capacity_ = capacity;
+        size_ = 0;
+        head_ = new Node();
+        tail_ = new Node();
+        head_->next = tail_;
+        tail_->pre = head_;
+    }
+
+    int get(int key) {
+        if (h_.count(key)) {
+            Node* node = h_[key];
+            RemoveNode(node);
+            AddNode(node);
+            return node->val;
+        }
+        return -1;
+    }
+
+    void put(int key, int value) {
+        if (h_.count(key)) {
+            Node* node = h_[key];
+            node->val = value;
+            RemoveNode(node);
+            AddNode(node);
+        } else {
+            if (capacity_ == size_) {
+                Node* node = tail_->pre;
+                h_.erase(node->key);
+                RemoveNode(node);
+                // 防止内存泄漏
+                delete node;
+				size_--;
+
+            }
+            size_++;
+            Node* node = new Node(key, value);
+            AddNode(node);
+            h_[key] = node;
+            return;
+        }
+    }
+
+    void AddNode(Node* node) {
+        node->next = head_->next;
+        node->pre = head_;
+        head_->next->pre = node;
+        head_->next = node;
+    }
+
+    void RemoveNode(Node* node) {
+        node->pre->next = node->next;
+        node->next->pre = node->pre;
+    }
+
+private:
+    int capacity_ = 0;
+    int size_= 0;
+    std::unordered_map<int, Node*> h_;
+    Node* head_, *tail_;
+};
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache* obj = new LRUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+*/

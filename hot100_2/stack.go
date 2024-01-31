@@ -100,7 +100,7 @@ func largestRectangleArea(heights []int) int {
 	heights = append([]int{0}, heights...)
 	heights = append(heights, 0)
 	for i := range heights {
-		// 如果是2，1，2的场景是怎么计算的呢
+		// 如果是2，1，2的场景是怎么计算的呢, 最后一个最小值，一定是从最开始计算到某位所以一定会计算出来
 		for len(stack) > 0 && heights[stack[len(stack)-1]] > heights[i] {
 			h := heights[stack[len(stack)-1]]
 			stack = stack[:len(stack)-1]
