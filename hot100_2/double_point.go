@@ -146,12 +146,42 @@ func trap(height []int) int {
 	return res
 }
 
+// 输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
+// 输出：6
+// 解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。
+func trapV2(height []int) int {
+	if len(height) < 3 {
+		return 0
+	}
+
+	left, right := 0, len(height)-1
+	leftMax, rightMax := 0, 0
+	result := 0
+
+	for left < right {
+		// 更新左右两边的最大高度
+		leftMax = max(leftMax, height[left])
+		rightMax = max(rightMax, height[right])
+
+		// 根据木桶效应，取较小的最大高度，计算当前位置的储水量
+		if leftMax < rightMax {
+			result += leftMax - height[left]
+			left++
+		} else {
+			result += rightMax - height[right]
+			right--
+		}
+	}
+
+	return result
+}
+
 // 横向接雨水
 // 输入：height = [5,4,2,6,1,0]
 // 输出：6
 // 解释：上面是由数组 [6] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。
 // 找上一个更大元素，在找的过程中填坑，灵神出版https://www.bilibili.com/video/BV1VN411J7S7/?vd_source=601fac537a0633b7cf3313f0a02ed170
-func trapV2(height []int) int {
+func trapV3(height []int) int {
 	var res = 0
 	var stack []int
 	for i, h := range height {
