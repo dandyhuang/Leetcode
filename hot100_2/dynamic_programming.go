@@ -158,7 +158,7 @@ func coinChangeV2(coins []int, amount int) int {
 }
 
 // 139. 单词拆分,  最长递增子序列类似
-// 输入: s = "applepenapple", wordDict = ["apple", "pen"]
+// 输入: s = "goalspecial",wordDict = ["go","goal","goals","special"]
 // 输出: true
 // 解释: 返回 true 因为 "applepenapple" 可以由 "apple" "pen" "apple" 拼接成。
 // 感觉不是背包问题。

@@ -121,7 +121,7 @@ func coinChange(coins []int, amount int) int {
 }
 
 // 139. 单词拆分
-// 输入: s = "leetcode", wordDict = ["leet", "code"]
+// 输入: s = "goalspecial",wordDict = ["go","goal","goals","special"]
 // 输出: true
 // 解释: 返回 true 因为 "leetcode" 可以由 "leet" 和 "code" 拼接成。
 // 感觉不是背包问题。

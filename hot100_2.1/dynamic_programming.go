@@ -1,7 +1,6 @@
 package hot100_2
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -82,7 +81,6 @@ func coinChange(coins []int, amount int) int {
 			if i-coins[j] >= 0 {
 				dp[i] = min(dp[i], dp[i-coins[j]]+1)
 			}
-			fmt.Println(dp[i], i, j)
 		}
 	}
 	if dp[amount] == math.MaxInt32 {
@@ -92,7 +90,7 @@ func coinChange(coins []int, amount int) int {
 }
 
 // 139. 单词拆分
-// 输入: s = "leetcode", wordDict = ["leet", "code"]
+// 输入: s = "goalspecial",wordDict = ["go","goal","goals","special"]
 // 输出: true
 // 解释: 返回 true 因为 "leetcode" 可以由 "leet" 和 "code" 拼接成。
 // 感觉不是背包问题。
@@ -106,7 +104,7 @@ func wordBreak(s string, wordDict []string) bool {
 	dp[0] = true
 	for i := 1; i <= len(s); i++ {
 		for j := 0; j < i; j++ {
-			if dp[j] && wordMap[s[j:i]] {
+			if dp[i-1] && wordMap[s[j:i]] {
 				dp[i] = true
 				break
 			}
