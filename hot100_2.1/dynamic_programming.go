@@ -1,5 +1,8 @@
 package hot100_2
 
+import "math"
+
+<<<<<<< HEAD
 import (
 	"math"
 )
@@ -74,19 +77,7 @@ func numSquares(n int) int {
 // 最少的硬币个数
 // amount = 3 , coins = [2]
 func coinChange(coins []int, amount int) int {
-	dp := make([]int, amount+1)
-	for i := 1; i <= amount; i++ {
-		dp[i] = math.MaxInt32
-		for j := range coins {
-			if i-coins[j] >= 0 {
-				dp[i] = min(dp[i], dp[i-coins[j]]+1)
-			}
-		}
-	}
-	if dp[amount] == math.MaxInt32 {
-		return -1
-	}
-	return dp[amount]
+
 }
 
 // 139. 单词拆分
@@ -95,22 +86,6 @@ func coinChange(coins []int, amount int) int {
 // 解释: 返回 true 因为 "leetcode" 可以由 "leet" 和 "code" 拼接成。
 // 感觉不是背包问题。
 func wordBreak(s string, wordDict []string) bool {
-	wordMap := make(map[string]bool)
-	for _, v := range wordDict {
-		wordMap[v] = true
-	}
-	// dp[i] 表示字符串 s 的前 i 个字符能否被拆分
-	dp := make([]bool, len(s)+1)
-	dp[0] = true
-	for i := 1; i <= len(s); i++ {
-		for j := 0; j < i; j++ {
-			if dp[i-1] && wordMap[s[j:i]] {
-				dp[i] = true
-				break
-			}
-		}
-	}
-	return dp[len(s)]
 }
 
 // 3. 无重复字符的最长子串

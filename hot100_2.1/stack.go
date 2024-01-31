@@ -38,5 +38,18 @@ func dailyTemperatures(T []int) []int {
 // 当前栈，左右两边，找到最小值
 func largestRectangleArea(heights []int) int {
 	heights = append(heights, 0)
-
+	heights = append([]int{0}, heights...)
+	stack := make([]int, 0)
+	res := 0
+	for i := range heights {
+		for len(stack) > 0 && heights[stack[len(stack)-1]] > heights[i] {
+			h := heights[stack[len(stack)-1]]
+			stack = stack[:len(stack)-1]
+			l := stack[len(stack)-1] + 1
+			r := i - 1
+			res = max(res, (r-l+1)*h)
+		}
+		stack = append(stack, i)
+	}
+	return res
 }

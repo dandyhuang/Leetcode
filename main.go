@@ -69,7 +69,17 @@ func printList(head *ListNode) {
 	}
 	fmt.Println()
 }
+func DeferClosureLoopV1() {
+	for i := 0; i < 10; i++ {
+		j := i
+		defer func() {
+			println(j)
+
+		}()
+	}
+}
 func main() {
+	DeferClosureLoopV1()
 	// 创建示例链表: 1 -> 2 -> 3 -> 4
 	// head := &ListNode{Val: 1, Next: &ListNode{Val: 2, Next: &ListNode{Val: 3, Next: &ListNode{Val: 4}}}}
 	// 创建示例链表: 1 -> 2 -> 3 -> 4 -> 5
