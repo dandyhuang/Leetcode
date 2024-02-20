@@ -50,17 +50,49 @@ func rob(nums []int) int {
 
 // 0 1背包问题
 func test1WeiBagProblem(weight, value []int, bagWeight int) int {
-	// 定义 and 初始化
+	// 定义 and 初始化， 一维dp数组（滚动数组）
 	dp := make([]int, bagWeight+1)
 	// 初始化 dp[j]表示：容量为j的背包，所背的物品价值可以最大为dp[j]
 	for i := 0; i < len(weight); i++ { // 遍历物品
 		// 这里必须倒序,区别二维,因为二维dp保存了i的状态
+		// 倒序遍历是为了保证物品i只被放入一次！。但如果一旦正序遍历了，那么物品0就会被重复加入多次！
 		for j := bagWeight; j >= weight[i]; j-- { // 遍历背包容量
+			// 一个是取自己dp[j] 相当于 二维dp数组中的dp[i-1][j]，即不放物品i，
+			// 一个是取dp[j - weight[i]] + value[i]，即放物品i，指定是取最大的，毕竟是求最大价值，
 			dp[j] = max(dp[j], dp[j-weight[i]]+value[i])
 		}
 	}
 	//fmt.Println(dp)
 	return dp[bagWeight]
+}
+func test2WeiBagProblem(weight, value []int, bagWeight int) int {
+	// 定义 and 初始化
+	dp := make([][]int, len(weight))
+	for i := range dp {
+		dp[i] = make([]int, bagWeight)
+	}
+	// 背包小于基本重量的,可以不用考虑，暂时
+	//for j := 0; j < weight[0]; j++ {
+	//	dp[0][j] = 0
+	//}
+	//背包重量大于基本重量的时候
+	for i := weight[0]; i <= bagWeight; i++ {
+		dp[0][i] = value[0]
+	}
+	for i := 1; i < len(weight); i++ { // 先遍历物品
+		for j := 0; j <= bagWeight; j++ { // 遍历背包
+			if j < weight[i] {
+				// 放不下物品i，那就等于前一个物品的最大价值
+				dp[i][j] = dp[i-1][j]
+			} else {
+				// 放的下物品， 当前容量去除物品i重量，和不放物品i看哪个价值更大。
+				dp[i][j] = max(dp[i-1][j-weight[i]]+value[i], dp[i-1][j])
+			}
+		}
+	}
+
+	//fmt.Println(dp)
+	return dp[len(weight)-1][bagWeight]
 }
 
 // 0 1背包问题
@@ -68,6 +100,51 @@ func main() {
 	weight := []int{1, 3, 4}
 	value := []int{15, 20, 30}
 	test1WeiBagProblem(weight, value, 4)
+}
+
+// 518. 零钱兑换 II 完全背包问题
+// 输入：amount = 5, coins = [1, 2, 5]
+// 输出：4
+// 解释：有四种方式可以凑成总金额：
+// 5=5
+// 5=2+2+1
+// 5=2+1+1+1
+// 5=1+1+1+1+1
+func change(amount int, coins []int) int {
+	// 凑成总金额j的货币组合数为dp[j]
+	dp := make([]int, amount+1)
+	dp[0] = 1
+	for i := 0; i < len(coins); i++ {
+		for j := coins[i]; j <= amount; j++ {
+			dp[j] += dp[j-coins[i]]
+		}
+	}
+	return dp[amount]
+}
+
+// 二维数组 原始叠加
+func changeOrigin(amount int, coins []int) int {
+	// 凑成总金额j的货币组合数为dp[j]
+	// dp[i][j]为考虑前 i 件物品，凑成总和为 j 的方案数量。
+	dp := make([][]int, len(coins)+1)
+	for i := range dp {
+		dp[i] = make([]int, amount+1)
+	}
+	// 初始化：当没有物品，背包容量也为0时，组合数为1
+	dp[0][0] = 1
+	for i := 1; i <= len(coins); i++ {
+		for j := 0; j <= amount; j++ {
+			// 从上一个物品开始
+			dp[i][j] = dp[i-1][j]
+			// 每个硬币可以被选择多次
+			// 从第一个硬币开始，所以要扣除i-1
+			for k := 1; k*coins[i-1] <= j; k++ {
+				dp[i][j] += dp[i-1][j-k*coins[i-1]]
+			}
+
+		}
+	}
+	return dp[len(coins)][amount]
 }
 
 // 279. 完全平方数
@@ -232,6 +309,11 @@ func longestCommonSubsequence(text1 string, text2 string) int {
 			if text1[i-1] == text2[j-1] {
 				dp[i][j] = dp[i-1][j-1] + 1
 			} else {
+				// 如text1=acf,text2=cfe
+				// f[2][3]=1, f[3][2] =2
+				// 我们比较text1[3]与text2[3]，发现'f'不等于'e'，这样f[3][3]无法在原先的基础上延长，
+				// 因此继承"ac"与"cfe" ，"acf"与"cf"的最长公共子序列中的较大值，
+				// 即 f[3][3] = max(f[2][3] ,f[3][2]) = 2。
 				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
 			}
 		}
@@ -285,6 +367,7 @@ func maxProduct(nums []int) int {
 // 输入：nums = [1,5,11,5]
 // 输出：true
 // 解释：数组可以分割成 [1, 5, 5] 和 [11] 。
+// 0 , 1背包问题
 func canPartition(nums []int) bool {
 	// dp[j] 表示： 容量为j的背包，所背的物品价值最大可以为dp[j]。
 	// dp[j]表示 背包总容量（所能装的总重量）是j，放进物品后，背的最大重量为dp[j]。
