@@ -251,11 +251,22 @@ func findLengthOfLCIS(nums []int) int {
 // 解释：最长公共子序列是 "ace"，它的长度为 3。
 func longestCommonSubsequence(text1 string, text2 string) int {
 	// dp[i][j]：长度为[0, i-1]的字符串text1与长度为[0, j-1]的字符串text2的最长公共子序列为dp[i][j]
-	dp := make([][]int, len(text1))
+	n, m := len(text1), len(text2)
+	dp := make([][]int, len(text1)+1)
 	for i := range dp {
-		dp[i] = make([]int, len(text2))
+		dp[i] = make([]int, len(text2)+1)
 	}
 
+	for i := 1; i <= len(text1); i++ {
+		for j := 1; j <= len(text2); j++ {
+			if text1[i-1] == text2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+			}
+		}
+	}
+	return dp[n][m]
 }
 
 // 718. 最长重复子数组
@@ -264,7 +275,22 @@ func longestCommonSubsequence(text1 string, text2 string) int {
 // 输出：3
 // 解释：长度最长的公共子数组是 [3, 2, 1] 。
 func findLength(nums1 []int, nums2 []int) int {
+	res := 0
+	n, m := len(nums1), len(nums2)
+	dp := make([][]int, n+1)
+	for i := range dp {
+		dp[i] = make([]int, m+1)
+	}
+	for i := 1; i <= n; i++ {
+		for j := 1; j <= m; j++ {
+			if nums1[i-1] == nums2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			}
+			res = max(res, dp[i][j])
+		}
+	}
 
+	return res
 }
 
 // 53. 最大子序和
@@ -272,7 +298,14 @@ func findLength(nums1 []int, nums2 []int) int {
 // 输出: 6
 // 解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
 func maxSubArrayV1(nums []int) int {
-
+	dp := make([]int, 0)
+	dp[0] = nums[0]
+	res := 0
+	for i := 1; i < len(nums); i++ {
+		dp[i] = max(dp[i-1]+nums[i], nums[i])
+		res = max(dp[i], res)
+	}
+	return res
 }
 
 // 152. 乘积最大子数组
@@ -281,18 +314,18 @@ func maxSubArrayV1(nums []int) int {
 // 解释: 子数组 [2,3] 有最大乘积 6。
 func maxProduct(nums []int) int {
 	// 由于存在负数，需要同时维护最大值和最小值
-	dpMax := make([]int, len(nums)+1)
 	dpMin := make([]int, len(nums)+1)
-	res := nums[0]
-	dpMax[0] = nums[0]
+	dpMax := make([]int, len(nums)+1)
 	dpMin[0] = nums[0]
+	dpMax[0] = nums[0]
+	res := nums[0]
 	for i := 1; i < len(nums); i++ {
 		if nums[i] > 0 {
-			dpMax[i] = max(nums[i], dpMax[i-1]*nums[i])
-			dpMin[i] = min(nums[i], dpMin[i-1]*nums[i])
+			dpMax[i] = max(dpMax[i-1]*nums[i], nums[i])
+			dpMin[i] = min(dpMin[i-1]*nums[i], nums[i])
 		} else {
-			dpMax[i] = max(nums[i], dpMin[i-1]*nums[i])
-			dpMin[i] = min(nums[i], dpMax[i-1]*nums[i])
+			dpMax[i] = max(dpMin[i-1]*nums[i], nums[i])
+			dpMin[i] = min(dpMax[i-1]*nums[i], nums[i])
 		}
 		res = max(res, dpMax[i])
 	}

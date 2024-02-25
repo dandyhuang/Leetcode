@@ -47,6 +47,93 @@ func subarraySum2(nums []int, k int) int {
 	return count
 }
 
+/*
+10. 正则表达式匹配
+给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 '.' 和 '*' 的正则表达式匹配。
+
+'.' 匹配任意单个字符
+'*' 匹配零个或多个前面的那一个元素
+所谓匹配，是要涵盖 整个 字符串 s的，而不是部分字符串。
+
+示例 1：
+
+输入：s = "aa", p = "a"
+输出：false
+解释："a" 无法匹配 "aa" 整个字符串。
+*/
+func isMatch(s string, p string) bool {
+	m, n := len(s), len(p)
+	matches := func(i, j int) bool {
+		if i == 0 {
+			return false
+		}
+		if p[j-1] == '.' {
+			return true
+		}
+		return s[i-1] == p[j-1]
+	}
+
+	f := make([][]bool, m+1)
+	for i := 0; i < len(f); i++ {
+		f[i] = make([]bool, n+1)
+	}
+	f[0][0] = true
+	for i := 0; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if p[j-1] == '*' {
+				f[i][j] = f[i][j] || f[i][j-2]
+				if matches(i, j-1) {
+					f[i][j] = f[i][j] || f[i-1][j]
+				}
+			} else if matches(i, j) {
+				f[i][j] = f[i][j] || f[i-1][j-1]
+			}
+		}
+	}
+	return f[m][n]
+}
+
+// 44. 通配符匹配 isMatch 判断字符串是否匹配通配符
+func isMatchV2(s string, p string) bool {
+	m, n := len(s), len(p)
+
+	// dp[i][j] 表示 s 的前 i 个字符和 p 的前 j 个字符是否匹配
+	dp := make([][]bool, m+1)
+	for i := range dp {
+		dp[i] = make([]bool, n+1)
+	}
+
+	// 空字符串和空模式匹配
+	dp[0][0] = true
+
+	// dp[0][j] 需要分情况讨论：
+	// 因为星号才能匹配空字符串，所以只有当模式 p的前 j 个字符均为星号时，dp[0][j] 才为真。
+	for j := 1; j <= n; j++ {
+		if p[j-1] == '*' {
+			dp[0][j] = dp[0][j-1]
+		} else {
+			break
+		}
+	}
+
+	// 动态规划填表
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if p[j-1] == '*' {
+				// '*' 匹配 0 次或多次的情况
+				// dp[i-1][j] 匹配多次情况
+				// dp[i][j-1] 删除，不匹配
+				dp[i][j] = dp[i-1][j] || dp[i][j-1]
+			} else if p[j-1] == '?' || s[i-1] == p[j-1] {
+				// '?' 匹配单个字符的情况，或字符相等的情况
+				dp[i][j] = dp[i-1][j-1]
+			}
+		}
+	}
+
+	return dp[m][n]
+}
+
 // 239. 滑动窗口最大值
 // 输入：nums = [1,3,-1,-3,5,3,6,7], k = 3
 // 输出：[3,3,5,5,6,7]

@@ -149,7 +149,36 @@ func swapPairsRecursion(head *ListNode) *ListNode {
 // 25. K 个一组翻转链表
 // 输入：head = [1,2,3,4,5], k = 2
 // 输出：[2,1,4,3,5]
+func reverseListV1(node* ListNode)*ListNode {
+	var pre *ListNode
+	for node != nil {
+		next:=node.Next
+		node.Next = pre
+		pre = node
+		node = next
+	}
+	return pre
+}
+
 func reverseKGroup(head *ListNode, k int) *ListNode {
+	dummy:=&ListNode{}
+	preHead:=dummy
+	for cur:=head; cur!=nil; {
+		tail:=cur
+		for i:=1; i < k&& cur != nil;i++ {
+			cur = cur.Next
+		}
+		if cur == nil {
+			return dummy.Next
+		}
+		nextHead:=cur.Next
+		cur.Next = nil
+		preHead.Next = reverseListV1(tail)
+		tail.Next = nextHead
+		preHead = tail
+		cur = nextHead
+	}
+	return dummy.Next
 }
 
 type Node struct {
