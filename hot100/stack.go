@@ -107,3 +107,30 @@ func largestRectangleArea(heights []int) int {
 	}
 	return maxArea
 }
+
+// 42. 接雨水
+// 输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
+// 输出：6
+// 解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。
+func trapV2(height []int) int {
+	var res = 0
+	var stack []int
+	for i, h := range height {
+		for len(stack) > 0 && height[stack[len(stack)-1]] < height[i] {
+			bottomH := height[stack[len(stack)-1]]
+			stack = stack[:len(stack)-1]
+			// 栈为空，接不住雨水了
+			if len(stack) == 0 {
+				break
+			}
+			// 如 5 2 3 1 6数组，在4的时候，计算3的面积，就需要从5的起点开始，但是5这个点又不能计算，所以要-1
+			// 只剩下5这个数组，是不计算面积的， 如果不从5开始计算，2的这个结点的面积的计算不到了
+			wide := i - stack[len(stack)-1] - 1
+			// 5和6取5的高度，减去3
+			leftHeight := min(h, height[stack[len(stack)-1]]) - bottomH
+			res += leftHeight * wide
+		}
+		stack = append(stack, i)
+	}
+	return res
+}

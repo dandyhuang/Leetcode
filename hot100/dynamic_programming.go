@@ -317,7 +317,7 @@ func longestValidParentheses(s string) int {
 	if n < 2 {
 		return 0
 	}
-	// dp[i] 表示以 s[i] 结尾的最长有效括号的长度
+	// dp[i] 表示以 s[i] 结尾的最长有效括号的长度,以 ‘(’ 结尾的子串对应的 dp 值必定为0
 	dp := make([]int, n)
 	res := 0
 	for i := 1; i < n; i++ {
@@ -329,8 +329,9 @@ func longestValidParentheses(s string) int {
 				} else {
 					dp[i] = 2
 				}
-			} else if i-dp[i-1] > 0 && s[i-dp[i-1]-1] == '(' { // '((())())'
-				if i-dp[i-1] >= 2 {
+			} else if i-dp[i-1] > 0 && s[i-dp[i-1]-1] == '(' { // '()(())' 看最后一个）情况
+				if i-dp[i-1] >= 2 { // '()))'
+					// 除了判断前面的i-1的数据是否是有效括号，还要判断i-dp[i-1]-1前面的i-dp[i-1]-2是否也是有效括号
 					dp[i] = dp[i-1] + dp[i-dp[i-1]-2] + 2
 				} else {
 					// "(()())" 这种场景
