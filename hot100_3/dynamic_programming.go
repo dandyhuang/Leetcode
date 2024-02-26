@@ -1,7 +1,15 @@
 package hot100_2
 
+import "math"
+
 func max(a, b int) int {
 	if a > b {
+		return a
+	}
+	return b
+}
+func min(a, b int) int {
+	if a < b {
 		return a
 	}
 	return b
@@ -86,7 +94,14 @@ func main() {
 func numSquares(n int) int {
 	// dp[i] 表示数字 i 的最小完全平方数数量
 	dp := make([]int, n+1)
-
+	for i := 1; i <= n; i++ {
+		dp[i] = math.MaxInt
+	}
+	for i := 1; i < n; i++ {
+		for j := i * i; j <= n; j++ {
+			dp[j] = min(dp[j], dp[j-i*i]+1)
+		}
+	}
 	return dp[n]
 }
 
@@ -97,22 +112,45 @@ func numSquares(n int) int {
 // 最少的硬币个数
 // amount = 3 , coins = [2]
 func coinChange(coins []int, amount int) int {
-
+	dp := make([]int, amount+1)
+	for i := 1; i <= amount; i++ {
+		dp[i] = math.MaxInt
+	}
+	for i := 0; i < len(coins); i++ {
+		for j := coins[i]; j <= amount; j++ {
+			// 只有dp[j-coins[i]]不是初始最大值时，该位才有选择的必要
+			if dp[j-coins[i]] != math.MaxInt {
+				dp[j] = min(dp[j], dp[j-coins[i]]+1)
+			}
+		}
+	}
+	if dp[amount] == math.MaxInt {
+		return -1
+	}
+	return dp[amount]
 }
 
 // 139. 单词拆分
-// 输入: s = "goalspecial",wordDict = ["go","goal","goals","special"]
+// 给你一个字符串 s 和一个字符串列表 wordDict 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 s 则返回 true。
+// 注意：不要求字典中出现的单词全部都使用，并且字典中的单词可以重复使用。
+// 输入: s = "applepenapple", wordDict = ["apple", "pen"]
 // 输出: true
-// 解释: 返回 true 因为 "leetcode" 可以由 "leet" 和 "code" 拼接成。
+// 解释: 返回 true 因为 "applepenapple" 可以由 "apple" "pen" "apple" 拼接成。
+// 注意，你可以重复使用字典中的单词。
 // 感觉不是背包问题。
 func wordBreak(s string, wordDict []string) bool {
+	dp := make([]bool, len(s))
+	for i := range wordDict {
+		for j := 0; j < len(s); j++ {
+
+		}
+	}
 }
 
 // 3. 无重复字符的最长子串
 // 输入: s = "abcabcbb"
 // 输出: 3
 // 解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
-// 滑动窗口，统一放过来求最长xxx
 func lengthOfLongestSubstringV2(s string) int {
 }
 

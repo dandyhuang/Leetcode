@@ -123,12 +123,33 @@ func trapV2(height []int) int {
 			if len(stack) == 0 {
 				break
 			}
-			// 如 5 2 3 1 6数组，在4的时候，计算3的面积，就需要从5的起点开始，但是5这个点又不能计算，所以要-1
-			// 只剩下5这个数组，是不计算面积的， 如果不从5开始计算，2的这个结点的面积的计算不到了
+			// 如 5 2 3 1 6数组，在index=4的时候数组为6时，栈内剩下[5,3,1], 出栈计算3的节点面积，就需要从5的起点开始，
+			// 但是5这个点又不能计算，所以要-1。 并且由5到6构成一个凹槽，积累雨水，即3的左右两边高度取较低的5减去自身3。
+			// 最后只剩下5这个数组，是不计算面积的，因为没有左边界
+			// 如果不从5开始计算，2的这个结点的面积的计算不到了
 			wide := i - stack[len(stack)-1] - 1
 			// 5和6取5的高度，减去3
 			leftHeight := min(h, height[stack[len(stack)-1]]) - bottomH
 			res += leftHeight * wide
+		}
+		stack = append(stack, i)
+	}
+	return res
+}
+
+func largestRectangleAreaV2(heights []int) int {
+	// 这里是为了不需要判断栈为空的时候。 和接雨水的问题，同样有这个问题，区分开来为什么
+	heights = append(heights, 0)
+	// 为了让单调递增的栈，最后的出栈计算
+	heights = append([]int{0}, heights...)
+	res := 0
+	var stack []int
+	for i, _ := range heights {
+		for len(stack) > 0 && heights[stack[len(stack)-1]] > heights[i] {
+			bottomH := heights[stack[len(stack)-1]]
+			stack = stack[:len(stack)-1]
+			wide := i - stack[len(stack)-1] - 1
+			res = max(res, bottomH*wide)
 		}
 		stack = append(stack, i)
 	}

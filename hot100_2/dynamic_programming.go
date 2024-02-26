@@ -145,7 +145,6 @@ func coinChangeV2(coins []int, amount int) int {
 		// 不定义成32，到时候+1会溢出，dp里头
 		dp[i] = math.MaxInt32
 		for j := range coins {
-			// 大于等于没关系，只需要保证dp[i-coins[j]]获取到值
 			if i-coins[j] >= 0 {
 				dp[i] = min(dp[i], dp[i-coins[j]]+1)
 			}

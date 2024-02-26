@@ -5,13 +5,32 @@ package hot100_2
 // 输入：s = "()[]{}"
 // 输出：true
 func isValid(s string) bool {
+	m := map[byte]byte{
+		'(': ')',
+		'{': '}',
+		'[': ']',
+	}
+	stack := make([]byte, 0)
+	for i := 0; i < len(s); i++ {
+		if _, ok := m[s[i]]; ok {
+			stack = append(stack, m[s[i]])
+		} else {
+			if len(stack) == 0 || stack[len(stack)-1] != s[i] {
+				return false
+			} else {
+				stack = stack[:len(stack)-1]
+			}
+		}
+	}
 
+	return true
 }
 
 // 394. 字符串解码
 // 输入：s = "3[a]2[bc]"
 // 输出："aaabcbc"
 func decodeString(s string) string {
+	
 }
 
 // 739. 每日温度
@@ -21,13 +40,14 @@ func decodeString(s string) string {
 // 输出: [1,1,4,2,1,1,0,0]
 func dailyTemperatures(T []int) []int {
 	res := make([]int, len(T))
-	queue := make([]int, 0)
+	stack := make([]int, 0)
 	for i := 0; i < len(T); i++ {
-		for len(queue) > 0 && T[queue[len(queue)-1]] < T[i] {
-			res[queue[len(queue)-1]] = i - queue[len(queue)-1]
-			queue = queue[:len(queue)-1]
+		for len(stack) > 0 && T[stack[len(stack)-1]] < T[i] {
+			start := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			res[start] = i - start
 		}
-		queue = append(queue, i)
+		stack = append(stack, i)
 	}
 	return res
 }
@@ -38,18 +58,6 @@ func dailyTemperatures(T []int) []int {
 // 当前栈，左右两边，找到最小值
 func largestRectangleArea(heights []int) int {
 	heights = append(heights, 0)
-	heights = append([]int{0}, heights...)
-	stack := make([]int, 0)
 	res := 0
-	for i := range heights {
-		for len(stack) > 0 && heights[stack[len(stack)-1]] > heights[i] {
-			h := heights[stack[len(stack)-1]]
-			stack = stack[:len(stack)-1]
-			l := stack[len(stack)-1] + 1
-			r := i - 1
-			res = max(res, (r-l+1)*h)
-		}
-		stack = append(stack, i)
-	}
 	return res
 }
