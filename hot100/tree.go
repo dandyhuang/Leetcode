@@ -310,6 +310,7 @@ func buildTreeIP(inorder []int, postorder []int) *TreeNode {
 	}
 
 	// 递归构建左子树和右子树
+	// 左子树，中序和后序都取左子树进行递归
 	root.Left = buildTreeIP(inorder[:rootIndex], postorder[:rootIndex])
 	root.Right = buildTreeIP(inorder[rootIndex+1:], postorder[rootIndex:len(postorder)-1])
 

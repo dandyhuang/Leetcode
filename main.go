@@ -78,6 +78,33 @@ func DeferClosureLoopV1() {
 		}()
 	}
 }
+func letterCombinations(digits string) []string {
+	m := map[byte]string{
+		'1': "",
+		'2': "abc",
+		'3': "def",
+		'4': "ghi",
+		'5': "jkl",
+		'6': "mno",
+		'7': "pqrs",
+		'8': "tuv",
+		'9': "wxyz",
+	}
+	var res []string
+	var dfs func(start int, str string)
+	dfs = func(start int, str string) {
+		if len(str) == len(digits) {
+			res = append(res, str)
+			return
+		}
+		for i := 0; i < len(digits); i++ {
+			tmp := m[digits[i]][start]
+			dfs(start+1, str+m[digits[i]][start])
+		}
+	}
+	dfs(0, "")
+	return res
+}
 func main() {
 	DeferClosureLoopV1()
 	// 创建示例链表: 1 -> 2 -> 3 -> 4
