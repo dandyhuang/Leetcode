@@ -23,7 +23,7 @@ func subsets(nums []int) [][]int {
 
 }
 
-// 39. 组合总和 很难理解的，i为index
+// 39. 组合总和
 // 输入：candidates = [2,3,6,7], target = 7
 // 输出：[[2,2,3],[7]]
 func combinationSum(candidates []int, target int) [][]int {
@@ -85,7 +85,36 @@ func exist(board [][]byte, word string) bool {
 // 输入：s = "aab"
 // 输出：[["a","a","b"],["aa","b"]]
 func partition(s string) [][]string {
+	var res [][]string
+	var dfs func(start int, arr []string)
+	dfs = func(start int, arr []string) {
+		if start == len(s) && len(arr) > 0 {
+			res = append(res, append([]string{}, arr...))
+		}
+		for i := start; i < len(s); i++ {
+			if isPalindromeStr(s[start : i+1]) {
+				arr = append(arr, s[start:i+1])
+				dfs(i+1, arr)
+				arr = arr[:len(arr)-1]
+			}
+		}
+	}
+	var arr []string
+	dfs(0, arr)
+	return res
+}
 
+func isPalindromeStr(s string) bool {
+	var i = 0
+	j := len(s) - 1
+	for i < j {
+		if s[i] != s[j] {
+			return false
+		}
+		i++
+		j--
+	}
+	return true
 }
 
 // 51. N 皇后
