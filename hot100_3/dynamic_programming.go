@@ -140,11 +140,57 @@ func coinChange(coins []int, amount int) int {
 // 感觉不是背包问题。
 func wordBreak(s string, wordDict []string) bool {
 	dp := make([]bool, len(s))
+	wordMap := make(map[string]bool)
+	for _, v := range wordDict {
+		wordMap[v] = true
+	}
+	dp[0] = true
 	for i := range wordDict {
 		for j := 0; j < len(s); j++ {
-
+			if j-len(wordDict) >= 0 && wordMap[s[j-len(wordDict):j]] {
+				dp[j] = dp[j] || dp[j-len(wordDict[i])]
+			}
 		}
 	}
+	return dp[len(s)-1]
+}
+
+func canBreak(start int, s string, wordMap map[string]bool) bool {
+	if start == len(s) {
+		return true
+	}
+	for i := start + 1; i <= len(s); i++ {
+		prefix := s[start:i]
+		if wordMap[prefix] && canBreak(i, s, wordMap) {
+			return true
+		}
+	}
+	return false
+}
+
+func wordBreakV2(s string, wordDict []string) bool {
+	wordMap := map[string]bool{}
+	for _, v := range wordDict {
+		wordMap[v] = true
+	}
+
+	var dfs func(start int) bool
+	dfs = func(start int) bool {
+		if start == len(s) {
+			return true
+		}
+		for i := start + 1; i <= len(s); i++ {
+			if !wordMap[s[start:i]] {
+				continue
+			}
+			if dfs(i) {
+				return true
+			}
+		}
+		return false
+	}
+
+	return dfs(0)
 }
 
 // 3. 无重复字符的最长子串

@@ -492,3 +492,59 @@ func levelOrder(root *TreeNode) [][]int {
 	}
 	return res
 }
+
+// 450. 删除二叉搜索树中的节点
+// 给定一个二叉搜索树的根节点 root 和一个值 key，删除二叉搜索树中的 key 对应的节点，
+// 并保证二叉搜索树的性质不变。返回二叉搜索树（有可能被更新）的根节点的引用。
+
+// 一般来说，删除节点可分为两个步骤：
+// 首先找到需要删除的节点；
+// 如果找到了，删除它。
+func deleteNode(root *TreeNode, key int) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if root.Val > key {
+		// 这里是删除步骤
+		root.Left = deleteNode(root.Left, key)
+		return root
+	} else if root.Val < key {
+		root.Right = deleteNode(root.Right, key)
+		return root
+	} else {
+		if root.Left == nil {
+			return root.Right
+		} else if root.Right == nil {
+			return root.Left
+		} else {
+			// 删除该节点，root节点的左节点，移到root节点的右节点的左节点
+			// 因为root右节点一定大于root左节点。
+			node := root.Right
+			for node.Left != nil {
+				node = node.Left
+			}
+			node.Left = root.Left
+			root.Left = nil
+			return root.Right
+		}
+	}
+	return nil
+}
+
+// 669. 修剪二叉搜索树
+// 输入：root = [3,0,4,null,2,null,null,1], low = 1, high = 3
+// 输出：[3,2,null,1]
+func trimBST(root *TreeNode, low, high int) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if root.Val < low {
+		return trimBST(root.Right, low, high)
+	}
+	if root.Val > high {
+		return trimBST(root.Left, low, high)
+	}
+	root.Left = trimBST(root.Left, low, high)
+	root.Right = trimBST(root.Right, low, high)
+	return root
+}

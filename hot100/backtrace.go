@@ -1,6 +1,9 @@
 package leetcode_hot100
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // 组合排序
 // 77. 组合
@@ -10,27 +13,165 @@ import "fmt"
 func combine(n int, k int) [][]int {
 	var res [][]int
 	var arr []int
-	var dfs func(int, int, int, []int)
-	dfs = func(n, k, start int, arr []int) {
+	var dfs func(int, []int)
+	dfs = func(start int, arr []int) {
 		if len(arr)+n-start+1 < k {
 			return
 		}
 		if len(arr) == k {
-			tmp := make([]int, k)
-			copy(tmp, arr)
-			res = append(res, tmp)
+			res = append(res, append([]int{}, arr...))
 			// 直接赋值有问题  拷贝的都是最后一个值
 			// res = append(res, arr)
 			return
 		}
 		for i := start; i <= n; i++ {
 			arr = append(arr, i)
-			dfs(n, k, i+1, arr)
+			dfs(i+1, arr)
 			arr = arr[:len(arr)-1]
 		}
 	}
-	dfs(n, k, 1, arr)
+	dfs(1, arr)
 	return res
+}
+
+// 216.组合总和III
+// 找出所有相加之和为 n 的 k 个数的组合。组合中只允许含有 1 - 9 的正整数，并且每种组合中不存在重复的数字。
+// 示例 1: 输入: k = 3, n = 7 输出: [[1,2,4]]
+// 示例 2: 输入: k = 3, n = 9 输出: [[1,2,6], [1,3,5], [2,3,4]]
+
+// 39. 组合总和
+// 输入：candidates = [2,3,6,7], target = 7
+// 输出：[[2,2,3],[7]]
+func combinationSum(candidates []int, target int) [][]int {
+	var res [][]int
+	var arr []int
+	var dfs func(int, int, []int)
+	dfs = func(sum, index int, arr []int) {
+		if sum > target {
+			return
+		}
+		if sum == target {
+			res = append(res, append([]int{}, arr...))
+			return
+		}
+
+		for i := index; i < len(candidates); i++ {
+			arr = append(arr, candidates[i])
+			dfs(sum+candidates[i], i, arr)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(0, 0, arr)
+	return res
+}
+
+// 17. 电话号码的字母组合
+// 输入：digits = "23"
+// 输出：["ad","ae","af","bd","be","bf","cd","ce","cf"]
+func letterCombinations(digits string) []string {
+	var res []string
+	if len(digits) == 0 {
+		return res
+	}
+	m := map[byte]string{
+		'1': "",
+		'2': "abc",
+		'3': "def",
+		'4': "ghi",
+		'5': "jkl",
+		'6': "mno",
+		'7': "pqrs",
+		'8': "tuv",
+		'9': "wxyz",
+	}
+	var dfs func(start int, str string)
+	dfs = func(start int, str string) {
+		if len(str) == len(digits) {
+			res = append(res, str)
+			return
+		}
+		for i := 0; i < len(m[digits[start]]); i++ {
+			dfs(start+1, str+string(m[digits[start]][i]))
+		}
+	}
+	dfs(0, "")
+	return res
+}
+
+// 131. 分割回文串
+// 给你一个字符串 s，请你将 s 分割成一些子串，使每个子串都是回文串。返回 s 所有可能的分割方案。
+// 输入：s = "aab"
+// 输出：[["a","a","b"],["aa","b"]]
+func partition(s string) [][]string {
+	var res [][]string
+	var arr []string
+	var dfs func(start int)
+	dfs = func(start int) {
+		if start == len(s) {
+			res = append(res, append([]string{}, arr...))
+			return
+		}
+		// 如abcd，切割a后， 在从bcd开始切割...
+		for i := start; i < len(s); i++ {
+			if isPalindromeStr(s[start : i+1]) {
+				arr = append(arr, s[start:i+1])
+				dfs(i + 1)
+				arr = arr[:len(arr)-1]
+			}
+		}
+	}
+	dfs(0)
+	return res
+}
+
+func isPalindromeStr(s string) bool {
+	for i, j := 0, len(s)-1; i < j; {
+		if s[i] != s[j] {
+			return false
+		}
+		i++
+		j--
+	}
+	return true
+}
+
+// 93. 复原 IP 地址
+// 输入：s = "101023"
+// 输出：["1.0.10.23","1.0.102.3","10.1.0.23","10.10.2.3","101.0.2.3"]
+func restoreIpAddresses(s string) []string {
+	var res []string
+	var dfs func(start int, str []string)
+	dfs = func(start int, str []string) {
+		if start == len(s) && len(str) == 4 {
+			res = append(res, str[0]+"."+str[1]+"."+str[2]+"."+str[3])
+			return
+		}
+		for i := start; i < len(s); i++ {
+			if isNormalIp(s, start, i) {
+				str = append(str, s[start:i+1])
+				if len(str) > 4 {
+					str = str[:len(str)-1]
+					return
+				}
+				dfs(i+1, str)
+				str = str[:len(str)-1]
+			}
+		}
+	}
+	var str []string
+	dfs(0, str)
+	return res
+}
+func isNormalIp(s string, start, end int) bool {
+	// 00等 情况排出
+	if end-start+1 > 1 && s[start] == '0' {
+		return false
+	}
+	num, _ := strconv.Atoi(s[start : end+1])
+	if num > 255 {
+		return false
+	}
+	return true
 }
 
 // 46. 全排列
@@ -87,38 +228,6 @@ func subsets(nums []int) [][]int {
 		}
 	}
 	dfs(0, arr)
-	return res
-}
-
-// 39. 组合总和 很难理解的，i为index
-// 输入：candidates = [2,3,6,7], target = 7
-// 输出：[[2,2,3],[7]]
-func combinationSum(candidates []int, target int) [][]int {
-	var res [][]int
-	var arr []int
-	var dfs func(int, int, []int)
-	dfs = func(target, index int, arr []int) {
-		if index == len(candidates) {
-			return
-		}
-
-		if target == 0 {
-			tmp := make([]int, len(arr))
-			copy(tmp, arr)
-			res = append(res, tmp)
-			return
-		}
-		if target < 0 {
-			return
-		}
-
-		for i := index; i < len(candidates); i++ {
-			arr = append(arr, candidates[i])
-			dfs(target-candidates[i], i, arr)
-			arr = arr[:len(arr)-1]
-		}
-	}
-	dfs(target, 0, arr)
 	return res
 }
 
@@ -188,43 +297,6 @@ func exist(board [][]byte, word string) bool {
 		}
 	}
 	return false
-}
-func isPalindromeStr(s string) bool {
-	for i, j := 0, len(s)-1; i < j; {
-		if s[i] != s[j] {
-			return false
-		}
-		i++
-		j--
-	}
-	return true
-}
-
-// 131. 分割回文串
-// 输入：s = "aab"
-// 输出：[["a","a","b"],["aa","b"]]
-func partition(s string) [][]string {
-	var res [][]string
-	var arr []string
-	var dfs func(s string, start int)
-	dfs = func(s string, start int) {
-		if start == len(s) {
-			tmp := make([]string, len(arr))
-			copy(tmp, arr)
-			res = append(res, tmp)
-			return
-		}
-		for i := start; i < len(s); i++ {
-			fmt.Println(s[start : i+1])
-			if isPalindromeStr(s[start : i+1]) {
-				arr = append(arr, s[start:i+1])
-				dfs(s, i+1)
-				arr = arr[:len(arr)-1]
-			}
-		}
-	}
-	dfs(s, 0)
-	return res
 }
 
 // 51. N 皇后

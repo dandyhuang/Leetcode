@@ -132,7 +132,7 @@ func ySubsets(nums []int) [][]int {
 }
 
 // 17. 电话号码的字母组合
-func letterCombinations(digits string) []string {
+func letterCombinationsV1(digits string) []string {
 	var res []string
 	if digits == "" {
 		return res
@@ -168,7 +168,6 @@ func letterCombinations(digits string) []string {
 	return res
 }
 
-//
 func ySolveNQueens(n int) [][]string {
 	var res [][]string
 	return res

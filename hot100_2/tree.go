@@ -1,11 +1,57 @@
 package hot100_2
 
-import "math"
+import (
+	"math"
+	"strconv"
+)
 
 type TreeNode struct {
 	Left  *TreeNode
 	Right *TreeNode
 	Val   int
+}
+
+// 左中右
+func inorderTraversalV1(root *TreeNode) []int {
+	var res []int
+	if root == nil {
+		return res
+	}
+	stack := make([]*TreeNode, 0)
+	node := root
+	for node != nil || len(stack) > 0 {
+		for node != nil {
+			stack = append(stack, node)
+			node = node.Left
+		}
+		node = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		res = append(res, node.Val)
+		node = node.Right
+	}
+	return res
+}
+
+// 94. 二叉树的前序遍历, 先插入右边，在插入左边出栈
+func preOrderTraversal(root *TreeNode) []int {
+	var res []int
+	if root == nil {
+		return res
+	}
+	stack := make([]*TreeNode, 0)
+	stack = append(stack, root)
+	for len(stack) > 0 {
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		res = append(res, node.Val)
+		if node.Right != nil {
+			stack = append(stack, node.Right)
+		}
+		if node.Left != nil {
+			stack = append(stack, node.Left)
+		}
+	}
+	return res
 }
 
 // 94. 二叉树的中序遍历
@@ -42,28 +88,6 @@ func preorderTraversal(root *TreeNode) []int {
 	return list
 }
 
-// 94. 二叉树的前序遍历
-func preOrderTraversal(root *TreeNode) []int {
-	var res []int
-	if root == nil {
-		return res
-	}
-	stack := make([]*TreeNode, 0)
-	stack = append(stack, root)
-	for len(stack) > 0 {
-		node := stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
-		res = append(res, node.Val)
-		if node.Right != nil {
-			stack = append(stack, node.Right)
-		}
-		if node.Left != nil {
-			stack = append(stack, node.Left)
-		}
-	}
-	return res
-}
-
 // 94. 二叉树的后序遍历
 func postOrderTraversal(root *TreeNode) []int {
 	var res []int
@@ -86,6 +110,51 @@ func postOrderTraversal(root *TreeNode) []int {
 	for i, j := 0, len(res)-1; i < j; i, j = i+1, j-1 {
 		res[i], res[j] = res[j], res[i]
 	}
+	return res
+}
+
+// 二叉树的层序遍历
+func levelOrder(root *TreeNode) [][]int {
+	var res [][]int
+	if root == nil {
+		return res
+	}
+	queue := []*TreeNode{root}
+	for len(queue) > 0 {
+		size := len(queue)
+		q := make([]int, size)
+		for i := 0; i < size; i++ {
+			node := queue[i]
+			q[i] = node.Val
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+		}
+		queue = queue[size:]
+		res = append(res, q)
+	}
+	return res
+}
+
+// 递归遍历层序遍历
+func levelOrderTraversal(root *TreeNode) [][]int {
+	res := [][]int{}
+	var order func(root *TreeNode, depth int)
+	order = func(root *TreeNode, depth int) {
+		if root == nil {
+			return
+		}
+		if len(res) == depth {
+			res = append(res, []int{})
+		}
+		res[depth] = append(res[depth], root.Val)
+		order(root.Left, depth+1)
+		order(root.Right, depth+1)
+	}
+	order(root, 0)
 	return res
 }
 
@@ -220,6 +289,111 @@ func isMirror(left *TreeNode, right *TreeNode) bool {
 		return false
 	}
 	return isMirror(left.Left, right.Right) && isMirror(left.Right, right.Left)
+}
+
+// 从底至顶
+func isBalanced(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+	var dfs func(node *TreeNode) int
+	dfs = func(node *TreeNode) int {
+		if node == nil {
+			return 0
+		}
+		l := dfs(node.Left)
+		// 增加判断，继续将错误往上抛
+		if l == -1 {
+			return -1
+		}
+		r := dfs(node.Right)
+		// 增加判断，继续往上抛
+		if r == -1 {
+			return -1
+		}
+		// 如果中间有 >1的情况，会导致l或者r返回-1。 后续在递归l-r的时候，计算就会不准确了
+		if abs(l-r) > 1 {
+			return -1
+		}
+		return max(l, r) + 1
+	}
+	return dfs(root) != -1
+}
+
+// 从顶至底
+func isBalancedV2(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+	var dfs func(node *TreeNode) int
+	dfs = func(node *TreeNode) int {
+		if node == nil {
+			return 0
+		}
+		l := dfs(node.Left)
+		r := dfs(node.Right)
+		return max(l, r) + 1
+	}
+	return abs(dfs(root.Left)-dfs(root.Right)) <= 1 && isBalanced(root.Left) && isBalanced(root.Right)
+}
+
+// 257. 二叉树的所有路径
+// 给你一个二叉树的根节点 root ，按 任意顺序 ，返回所有从根节点到叶子节点的路径。
+// 叶子节点 是指没有子节点的节点。
+// 输入：root = [1,2,3,null,5]
+// 输出：["1->2->5","1->3"]
+func binaryTreePaths(root *TreeNode) []string {
+	var res []string
+	var arr []*TreeNode
+	var dfs func(root *TreeNode)
+	dfs = func(root *TreeNode) {
+		arr = append(arr, root)
+		if root.Left == nil && root.Right == nil {
+			var path string
+			for i := 0; i < len(arr)-1; i++ {
+				path += strconv.Itoa(arr[i].Val)
+				path += "->"
+			}
+			path += strconv.Itoa(arr[len(arr)-1].Val)
+			res = append(res, path)
+			return
+		}
+		if root.Left != nil {
+			dfs(root.Left)
+			arr = arr[:len(arr)-1]
+		}
+		if root.Right != nil {
+			dfs(root.Right)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(root)
+	return res
+}
+
+func binaryTreePathsBfs(root *TreeNode) []string {
+	var res []string
+	var paths = []string{strconv.Itoa(root.Val)}
+	var stack = []*TreeNode{root}
+	for len(stack) > 0 {
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		path := paths[len(paths)-1]
+		paths = paths[:len(paths)-1]
+		if node.Left == nil && node.Right == nil {
+			res = append(res, path)
+			continue
+		}
+		if node.Left != nil {
+			stack = append(stack, node.Left)
+			paths = append(paths, path+"->"+strconv.Itoa(node.Left.Val))
+		}
+		if node.Right != nil {
+			stack = append(stack, node.Right)
+			paths = append(paths, path+"->"+strconv.Itoa(node.Right.Val))
+		}
+	}
+	return res
 }
 
 // 108. 将有序数组转换为二叉搜索树
@@ -378,23 +552,23 @@ func rightSideViewRecursion(root *TreeNode) []int {
 // 输入：root = [1,2,5,3,4,null,6]
 // 输出：[1,null,2,null,3,null,4,null,5,null,6]
 func flatten(root *TreeNode) {
-	var res []*TreeNode
-	var dfs func(*TreeNode)
-	dfs = func(node *TreeNode) {
-		if node == nil {
-			return
-		}
-		res = append(res, node)
-		dfs(node.Left)
-		dfs(node.Right)
+	if root == nil {
+		return
 	}
-	dfs(root)
-	for i := range res {
-		if i+1 == len(res) {
-			break
+	stack := []*TreeNode{root}
+	for len(stack) > 0 {
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		if node.Right != nil {
+			stack = append(stack, node.Right)
 		}
-		res[i].Left = nil
-		res[i].Right = res[i+1]
+		if node.Left != nil {
+			stack = append(stack, node.Left)
+		}
+		if len(stack) > 0 {
+			node.Right = stack[len(stack)-1]
+		}
+		node.Left = nil
 	}
 }
 
@@ -455,6 +629,29 @@ func buildTreeIP(inorder []int, postorder []int) *TreeNode {
 	root.Right = buildTreeIP(inorder[rootIndex+1:], postorder[rootIndex:len(postorder)-1])
 
 	return root
+}
+
+// 654. 最大二叉树
+// 给定一个不重复的整数数组 nums 。 最大二叉树 可以用下面的算法从 nums 递归地构建:
+// 创建一个根节点，其值为 nums 中的最大值。
+// 递归地在最大值 左边 的 子数组前缀上 构建左子树。
+// 递归地在最大值 右边 的 子数组后缀上 构建右子树。
+// 返回 nums 构建的 最大二叉树 。
+func constructMaximumBinaryTree(nums []int) *TreeNode {
+	//和二叉树的中序和后序构建树是类似的思路
+	if len(nums) == 0 {
+		return nil
+	}
+	var index, rootValue int
+	for i, v := range nums {
+		if v > rootValue {
+			index = i
+			rootValue = v
+		}
+	}
+	l := constructMaximumBinaryTree(nums[:index])
+	r := constructMaximumBinaryTree(nums[index+1:])
+	return &TreeNode{Val: rootValue, Left: l, Right: r}
 }
 
 // 437. 路径总和 III 因为任何节点，都可以做为开始的节点 太难了，搞不动
@@ -600,7 +797,7 @@ func inOrderTraversal(root *TreeNode) []int {
 }
 
 // 层序遍历
-func levelOrder(root *TreeNode) [][]int {
+func levelOrderV1(root *TreeNode) [][]int {
 	res := make([][]int, 0)
 	if root == nil {
 		return res

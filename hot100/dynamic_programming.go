@@ -395,6 +395,38 @@ func wordBreak(s string, wordDict []string) bool {
 	return dp[len(s)]
 }
 
+// dsf单词拆分
+func wordBreakV2(s string, wordDict []string) bool {
+	wordMap := map[string]bool{}
+	for _, v := range wordDict {
+		wordMap[v] = true
+	}
+	// 记忆搜索
+	memo := make(map[int]bool)
+	var dfs func(start int) bool
+	dfs = func(start int) bool {
+		if start == len(s) {
+			return true
+		}
+		if res, ok := memo[start]; ok {
+			return res
+		}
+		for i := start + 1; i <= len(s); i++ {
+			if !wordMap[s[start:i]] {
+				continue
+			}
+			if dfs(i) {
+				memo[start] = true
+				return true
+			}
+		}
+		memo[start] = false
+		return false
+	}
+
+	return dfs(0)
+}
+
 // 300. 最长递增子序列
 // 输入：nums = [10,9,2,5,3,7,101,18]
 // 输出：4

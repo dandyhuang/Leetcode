@@ -106,6 +106,8 @@ func letterCombinations(digits string) []string {
 	return res
 }
 func main() {
+	s := "13ewer"
+	fmt.Println(s[1:4])
 	DeferClosureLoopV1()
 	// 创建示例链表: 1 -> 2 -> 3 -> 4
 	// head := &ListNode{Val: 1, Next: &ListNode{Val: 2, Next: &ListNode{Val: 3, Next: &ListNode{Val: 4}}}}
