@@ -17,17 +17,53 @@ func permute(nums []int) [][]int {
 }
 
 // 78. 子集
+// 给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+// 说明：解集不能包含重复的子集。
 // 输入：nums = [1,2,3]
 // 输出：[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
 func subsets(nums []int) [][]int {
-
+	var res [][]int
+	var arr []int
+	var dfs func(start int, arr []int)
+	dfs = func(start int, arr []int) {
+		res = append(res, append([]int{}, arr...))
+		if start >= len(nums) {
+			return
+		}
+		for i := start; i < len(nums); i++ {
+			arr = append(arr, nums[i])
+			dfs(i+1, arr)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(0, arr)
+	return res
 }
 
 // 39. 组合总和
+// 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+// candidates 中的数字可以无限制重复被选取。
 // 输入：candidates = [2,3,6,7], target = 7
 // 输出：[[2,2,3],[7]]
 func combinationSum(candidates []int, target int) [][]int {
-
+	var res [][]int
+	var arr []int
+	var dfs func(start, sum int, arr []int)
+	dfs = func(start, sum int, arr []int) {
+		if sum >= target {
+			if sum == target {
+				res = append(res, append([]int{}, arr...))
+			}
+			return
+		}
+		for i := start; i < len(candidates); i++ {
+			arr = append(arr, candidates[i])
+			dfs(i, sum+candidates[i], arr)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(0, 0, arr)
+	return res
 }
 
 // 22. 括号生成 太抽象了

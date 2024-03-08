@@ -1,7 +1,7 @@
 package leetcode_hot100
 
 import (
-	"fmt"
+	"sort"
 	"strconv"
 )
 
@@ -40,6 +40,8 @@ func combine(n int, k int) [][]int {
 // 示例 2: 输入: k = 3, n = 9 输出: [[1,2,6], [1,3,5], [2,3,4]]
 
 // 39. 组合总和
+// 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+// candidates 中的数字可以无限制重复被选取。
 // 输入：candidates = [2,3,6,7], target = 7
 // 输出：[[2,2,3],[7]]
 func combinationSum(candidates []int, target int) [][]int {
@@ -58,6 +60,41 @@ func combinationSum(candidates []int, target int) [][]int {
 		for i := index; i < len(candidates); i++ {
 			arr = append(arr, candidates[i])
 			dfs(sum+candidates[i], i, arr)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(0, 0, arr)
+	return res
+}
+
+// 40.组合总和II
+// 给定一个数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+// candidates 中的每个数字在每个组合中只能使用一次。
+// 说明： 所有数字（包括目标数）都是正整数。解集不能包含重复的组合。
+// 示例 1:
+// 输入: candidates = [10,1,2,7,6,1,5], target = 8, // 1,1,2,5,6,7,10
+// 输出:
+// [  [1,1,6],  [1,2,5], [1,7], [2,6] ]
+func combinationSum2(candidates []int, target int) [][]int {
+	sort.Slice(candidates, func(i, j int) bool {
+		if candidates[i] < candidates[j] {
+			return true
+		}
+		return false
+	})
+	var res [][]int
+	var arr []int
+	var dfs func(start, sum int, arr []int)
+	dfs = func(start, sum int, arr []int) {
+		if sum >= target {
+			if sum == target {
+				res = append(res, append([]int{}, arr...))
+			}
+			return
+		}
+		for i := start; i < len(candidates); i++ {
+			arr = append(arr, candidates[i])
+			dfs(i+1, sum+candidates[i], arr)
 			arr = arr[:len(arr)-1]
 		}
 	}
@@ -135,35 +172,36 @@ func isPalindromeStr(s string) bool {
 	return true
 }
 
-// 93. 复原 IP 地址
+// 93. 复原 IP 地址 分隔
 // 输入：s = "101023"
 // 输出：["1.0.10.23","1.0.102.3","10.1.0.23","10.10.2.3","101.0.2.3"]
 func restoreIpAddresses(s string) []string {
 	var res []string
-	var dfs func(start int, str []string)
-	dfs = func(start int, str []string) {
-		if start == len(s) && len(str) == 4 {
-			res = append(res, str[0]+"."+str[1]+"."+str[2]+"."+str[3])
+	var dfs func(start int, arr []string)
+	dfs = func(start int, arr []string) {
+		if start == len(s) && len(arr) == 4 {
+			res = append(res, arr[0]+"."+arr[1]+"."+arr[2]+"."+arr[3])
 			return
 		}
 		for i := start; i < len(s); i++ {
 			if isNormalIp(s, start, i) {
-				str = append(str, s[start:i+1])
-				if len(str) > 4 {
-					str = str[:len(str)-1]
+				arr = append(arr, s[start:i+1])
+				// 大于三位数的ip
+				if len(arr) > 4 || i-start+1 > 3 {
 					return
 				}
-				dfs(i+1, str)
-				str = str[:len(str)-1]
+				dfs(i+1, arr)
+				arr = arr[:len(arr)-1]
 			}
 		}
 	}
-	var str []string
-	dfs(0, str)
+	var arr []string
+	dfs(0, arr)
 	return res
 }
+
 func isNormalIp(s string, start, end int) bool {
-	// 00等 情况排出
+	// 01等 情况排出
 	if end-start+1 > 1 && s[start] == '0' {
 		return false
 	}
@@ -172,6 +210,63 @@ func isNormalIp(s string, start, end int) bool {
 		return false
 	}
 	return true
+}
+
+// 78. 子集
+// 给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+// 说明：解集不能包含重复的子集。
+// 输入：nums = [1,2,3]
+// 输出：[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
+func subsets(nums []int) [][]int {
+	var res [][]int
+	var arr []int
+	var dfs func(int, []int)
+	dfs = func(start int, arr []int) {
+		tmp := make([]int, len(arr))
+		copy(tmp, arr)
+		res = append(res, tmp)
+		if start >= len(nums) {
+			return
+		}
+		for i := start; i < len(nums); i++ {
+			arr = append(arr, nums[i])
+			dfs(i+1, arr)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(0, arr)
+	return res
+}
+
+// 90.子集II
+// 给定一个可能包含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+// 说明：解集不能包含重复的子集。
+// 示例:
+// 输入: [1,2,2]
+// 输出: [ [2], [1], [1,2,2], [2,2], [1,2], [] ]
+func subsetsWithDup(nums []int) [][]int {
+	var res [][]int
+	var arr []int
+	var dfs func(int, []int)
+	dfs = func(start int, arr []int) {
+		tmp := make([]int, len(arr))
+		copy(tmp, arr)
+		res = append(res, tmp)
+		if start >= len(nums) {
+			return
+		}
+		for i := start; i < len(nums); i++ {
+			// i - 1 >= start
+			if i >= 1 && nums[i-1] == nums[i] {
+				continue
+			}
+			arr = append(arr, nums[i])
+			dfs(i+1, arr)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(0, arr)
+	return res
 }
 
 // 46. 全排列
@@ -202,32 +297,6 @@ func permute(nums []int) [][]int {
 		}
 	}
 	dfs(nums, used, arr)
-	return res
-}
-
-// 78. 子集
-// 输入：nums = [1,2,3]
-// 输出：[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
-func subsets(nums []int) [][]int {
-	var res [][]int
-	var arr []int
-	var dfs func(int, []int)
-	dfs = func(start int, arr []int) {
-		tmp := make([]int, len(arr))
-		copy(tmp, arr)
-		res = append(res, tmp)
-		if start >= len(nums) {
-			return
-		}
-		for i := start; i < len(nums); i++ {
-			arr = append(arr, nums[i])
-			fmt.Println("in:", i, arr)
-			dfs(i+1, arr)
-			arr = arr[:len(arr)-1]
-			fmt.Println("out:", i, arr)
-		}
-	}
-	dfs(0, arr)
 	return res
 }
 
