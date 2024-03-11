@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 func DeferLoopV20() {
 	// i变量在每次调用中被保存了下来
@@ -104,6 +107,16 @@ func letterCombinations(digits string) []string {
 	}
 	dfs(0, "")
 	return res
+}
+func isNormalIp(s string, start, end int) bool {
+	if s[0] == '0' && end-start+1 > 1 {
+		return false
+	}
+	num, _ := strconv.Atoi(s[start : end+1])
+	if num > 255 {
+		return false
+	}
+	return true
 }
 func main() {
 	s := "13ewer"

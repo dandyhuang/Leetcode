@@ -93,7 +93,12 @@ func combinationSum2(candidates []int, target int) [][]int {
 			return
 		}
 		for i := start; i < len(candidates); i++ {
+			// 保证同层的 i > start
+			if i > start && candidates[i-1] == candidates[i] {
+				continue
+			}
 			arr = append(arr, candidates[i])
+			// 这里递归是纵向遍历
 			dfs(i+1, sum+candidates[i], arr)
 			arr = arr[:len(arr)-1]
 		}
@@ -245,6 +250,12 @@ func subsets(nums []int) [][]int {
 // 输入: [1,2,2]
 // 输出: [ [2], [1], [1,2,2], [2,2], [1,2], [] ]
 func subsetsWithDup(nums []int) [][]int {
+	sort.Slice(nums, func(i, j int) bool {
+		if nums[i] < nums[j] {
+			return true
+		}
+		return false
+	})
 	var res [][]int
 	var arr []int
 	var dfs func(int, []int)
@@ -257,9 +268,40 @@ func subsetsWithDup(nums []int) [][]int {
 		}
 		for i := start; i < len(nums); i++ {
 			// i - 1 >= start
-			if i >= 1 && nums[i-1] == nums[i] {
+			if i > start && nums[i-1] == nums[i] {
 				continue
 			}
+			arr = append(arr, nums[i])
+			dfs(i+1, arr)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(0, arr)
+	return res
+}
+
+// 491. 非递减子序列
+// 给你一个整数数组 nums ，找出并返回所有该数组中不同的递增子序列，递增子序列中 至少有两个元素 。你可以按 任意顺序 返回答案。
+// 输入：nums = [4,6,7,7]
+// 输出：[[4,6],[4,6,7],[4,6,7,7],[4,7],[4,7,7],[6,7],[6,7,7],[7,7]]
+func findSubsequences(nums []int) [][]int {
+	var res [][]int
+	var arr []int
+	var dfs func(start int, arr []int)
+
+	dfs = func(start int, arr []int) {
+		if len(arr) > 1 {
+			res = append(res, append([]int{}, arr...))
+		}
+		if start == len(nums) {
+			return
+		}
+		used := make(map[int]bool, 0) // 对本层元素进行去重
+		for i := start; i < len(nums); i++ {
+			if (len(arr) > 0 && nums[i] < arr[len(arr)-1]) || used[nums[i]] {
+				continue
+			}
+			used[nums[i]] = true
 			arr = append(arr, nums[i])
 			dfs(i+1, arr)
 			arr = arr[:len(arr)-1]
