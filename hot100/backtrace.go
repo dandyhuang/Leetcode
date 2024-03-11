@@ -256,8 +256,8 @@ func subsetsWithDup(nums []int) [][]int {
 			return
 		}
 		for i := start; i < len(nums); i++ {
-			// i - 1 >= start
-			if i >= 1 && nums[i-1] == nums[i] {
+			// i >= 1
+			if i > start && nums[i-1] == nums[i] {
 				continue
 			}
 			arr = append(arr, nums[i])
@@ -275,28 +275,61 @@ func subsetsWithDup(nums []int) [][]int {
 func permute(nums []int) [][]int {
 	var res [][]int
 	var arr []int
-	used := make([]int, len(nums))
-	var dfs func([]int, []int, []int)
-	dfs = func(nums, used []int, arr []int) {
-		if len(nums) == len(arr) {
-			tmp := make([]int, len(nums))
-			copy(tmp, arr)
-			res = append(res, tmp)
+	used := make([]bool, len(nums)+1)
+	var dfs func(arr []int, used []bool)
+	dfs = func(arr []int, used []bool) {
+		if len(arr) == len(nums) {
+			res = append(res, append([]int{}, arr...))
 			return
 		}
-		// i始终从0开始递归
+
 		for i := 0; i < len(nums); i++ {
-			if used[i] == 1 {
+			if used[i] {
 				continue
 			}
-			used[i] = 1
+			used[i] = true
 			arr = append(arr, nums[i])
-			dfs(nums, used, arr)
+			dfs(arr, used)
 			arr = arr[:len(arr)-1]
-			used[i] = 0
+			used[i] = false
 		}
 	}
-	dfs(nums, used, arr)
+	dfs(arr, used)
+	return res
+}
+
+// 47. 全排列 II
+// 给定一个可包含重复数字的序列 nums ，按任意顺序 返回所有不重复的全排列。
+// 输入：nums = [1,1,2]
+// 输出：
+// [[1,1,2],
+// [1,2,1],
+// [2,1,1]]
+func permuteUnique(nums []int) [][]int {
+	var res [][]int
+	var arr []int
+	used := make([]bool, len(nums)+1)
+	var dfs func(arr []int, used []bool)
+	dfs = func(arr []int, used []bool) {
+		if len(arr) == len(nums) {
+			res = append(res, append([]int{}, arr...))
+			return
+		}
+		// 树层去重
+		levelUsed := make(map[int]bool, 0)
+		for i := 0; i < len(nums); i++ {
+			if used[i] || levelUsed[nums[i]] {
+				continue
+			}
+			levelUsed[nums[i]] = true
+			used[i] = true
+			arr = append(arr, nums[i])
+			dfs(arr, used)
+			arr = arr[:len(arr)-1]
+			used[i] = false
+		}
+	}
+	dfs(arr, used)
 	return res
 }
 

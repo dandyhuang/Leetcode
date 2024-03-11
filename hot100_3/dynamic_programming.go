@@ -198,6 +198,18 @@ func wordBreakV2(s string, wordDict []string) bool {
 // 输出: 3
 // 解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
 func lengthOfLongestSubstringV2(s string) int {
+	res := 0
+	m := make(map[byte]int, 0)
+	left := 0
+	for i, _ := range s {
+		for m[s[i]] != 0 {
+			delete(m, s[left])
+			left++
+		}
+		res = max(res, i-left+1)
+		m[s[i]] = 1
+	}
+	return res
 }
 
 // 300. 最长递增子序列
