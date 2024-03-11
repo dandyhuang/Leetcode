@@ -1,5 +1,7 @@
 package hot100_2
 
+import "sort"
+
 // 组合排序
 // 77. 组合
 // 输入：n = 4, k = 2
@@ -31,6 +33,67 @@ func subsets(nums []int) [][]int {
 			return
 		}
 		for i := start; i < len(nums); i++ {
+			arr = append(arr, nums[i])
+			dfs(i+1, arr)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(0, arr)
+	return res
+}
+
+// 90.子集II
+// 给定一个可能包含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+// 说明：解集不能包含重复的子集。
+// 示例:
+// 输入: [1,2,2]
+// 输出: [ [2], [1], [1,2,2], [2,2], [1,2], [] ]
+func subsetsWithDup(nums []int) [][]int {
+	var res [][]int
+	var arr []int
+	var dfs func(int, []int)
+	dfs = func(start int, arr []int) {
+		tmp := make([]int, len(arr))
+		copy(tmp, arr)
+		res = append(res, tmp)
+		if start >= len(nums) {
+			return
+		}
+		for i := start; i < len(nums); i++ {
+			// i >= 1
+			if i > start && nums[i-1] == nums[i] {
+				continue
+			}
+			arr = append(arr, nums[i])
+			dfs(i+1, arr)
+			arr = arr[:len(arr)-1]
+		}
+	}
+	dfs(0, arr)
+	return res
+}
+
+func subsetsWithDupV2(nums []int) [][]int {
+	sort.Slice(nums, func(i, j int) bool {
+		if nums[i] < nums[j] {
+			return true
+		}
+		return false
+	})
+	var res [][]int
+	var arr []int
+	var dfs func(int, []int)
+	dfs = func(start int, arr []int) {
+		res = append(res, append([]int{}, arr...))
+		if start >= len(nums) {
+			return
+		}
+		used := make(map[int]bool)
+		for i := start; i < len(nums); i++ {
+			if used[nums[i]] {
+				continue
+			}
+			used[nums[i]] = true
 			arr = append(arr, nums[i])
 			dfs(i+1, arr)
 			arr = arr[:len(arr)-1]
