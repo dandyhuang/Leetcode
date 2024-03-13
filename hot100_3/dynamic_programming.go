@@ -217,7 +217,20 @@ func lengthOfLongestSubstringV2(s string) int {
 // 输出：4
 // 解释：最长递增子序列是 [2,3,7,101]，因此长度为 4
 func lengthOfLIS(nums []int) int {
-
+	res := 1
+	dp := make([]int, len(nums))
+	for i := range dp {
+		dp[i] = 1
+	}
+	for i := 1; i < len(nums); i++ {
+		for j := 0; j < i; j++ {
+			if nums[j] < nums[i] {
+				dp[i] = max(dp[i], dp[j]+1)
+			}
+		}
+		res = max(res, dp[i])
+	}
+	return res
 }
 
 // 674. 最长连续递增序列
@@ -225,7 +238,18 @@ func lengthOfLIS(nums []int) int {
 // 输出：3
 // 解释：最长连续递增序列是 [1,3,5], 长度为3。尽管 [1,3,5,7] 也是升序的子序列, 但它不是连续的，因为 5 和 7 在原数组里被 4 隔开。
 func findLengthOfLCIS(nums []int) int {
-
+	res := 1
+	dp := make([]int, len(nums))
+	for i := range dp {
+		dp[i] = 1
+	}
+	for i := 1; i < len(nums); i++ {
+		if nums[i] > nums[i-1] {
+			dp[i] = max(dp[i-1]+1, dp[i])
+		}
+		res = max(dp[i], res)
+	}
+	return res
 }
 
 // 718. 最长重复子数组
