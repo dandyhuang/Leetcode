@@ -112,31 +112,6 @@ func longestPalindromeDp(s string) string {
 	return s[start : maxLen+1]
 }
 
-// 1143.最长公共子序列
-// 输入：text1 = "abcde", text2 = "ace"
-// 输出：3
-// 解释：最长公共子序列是 "ace"，它的长度为 3。
-func longestCommonSubsequenceV2(text1 string, text2 string) int {
-	// dp[i][j]：长度为[0, i - 1]的字符串text1与长度为[0, j - 1]的字符串text2的最长公共子序列为dp[i][j]
-	n := len(text1)
-	m := len(text2)
-	dp := make([][]int, n+1)
-	for i := range dp {
-		dp[i] = make([]int, m+1)
-	}
-	for i := 1; i <= n; i++ {
-		for j := 1; j <= m; j++ {
-			// i-1 为了统计方便，i从1开始。 思考一下，为什么不需要考虑dp[i][j-1] 和dp[i-1][j]的情况
-			if text1[i-1] == text2[j-1] {
-				dp[i][j] = dp[i-1][j-1] + 1
-			} else {
-				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
-			}
-		}
-	}
-	return dp[n][m]
-}
-
 // 72. 编辑距离
 // 输入：word1 = "horse", word2 = "ros"
 // 输出：3

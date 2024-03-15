@@ -156,11 +156,27 @@ func findLength(nums1 []int, nums2 []int) int {
 }
 
 // 1143.最长公共子序列
-// 输入：text1 = "abcde", text2 = "ace"
-// 输出：3
-// 解释：最长公共子序列是 "ace"，它的长度为 3。
+// 输入：text1 = "ezupkr", text2 = "ubmrapg"
+// 输出： 2
+// 解释：最长公共子序列是 "up"，它的长度为 2
 func longestCommonSubsequence(text1 string, text2 string) int {
-
+	res := 0
+	n, m := len(text1), len(text2)
+	dp := make([][]int, n+1)
+	for i := range dp {
+		dp[i] = make([]int, m+1)
+	}
+	for i := 1; i <= n; i++ {
+		for j := 1; j <= m; j++ {
+			if text1[i-1] == text2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+			}
+			res = max(res, dp[i][j])
+		}
+	}
+	return res
 }
 
 // 53. 最大子序和
@@ -168,7 +184,14 @@ func longestCommonSubsequence(text1 string, text2 string) int {
 // 输出: 6
 // 解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
 func maxSubArrayV1(nums []int) int {
-
+	dp := make([]int, len(nums))
+	res := nums[0]
+	dp[0] = nums[0]
+	for i := 1; i < len(nums); i++ {
+		dp[i] = max(dp[i-1]+nums[i], nums[i])
+		res = max(res, dp[i])
+	}
+	return res
 }
 
 // 152. 乘积最大子数组
