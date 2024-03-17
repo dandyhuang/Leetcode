@@ -259,23 +259,48 @@ func findLengthOfLCIS(nums []int) int {
 // 解释：长度最长的公共子数组是 [3, 2, 1] 。
 func findLength(nums1 []int, nums2 []int) int {
 	res := 0
-	dp := make([][]int, len(nums1))
+	dp := make([][]int, len(nums1)+1)
 	for i := range dp {
-		dp[i] = make([]int, len(nums2))
+		dp[i] = make([]int, len(nums2)+1)
 		dp[i][0] = 1
 	}
 	for i := 0; i < len(nums2); i++ {
 		dp[0][i] = 1
 	}
-	for i := 0; i < len(nums1); i++ {
-		for j := 0; j < len(nums2); j++ {
-			for nums1[i] == nums2[j] {
+	for i := 1; i <= len(nums1); i++ {
+		for j := 1; j <= len(nums2); j++ {
+			if nums1[i-1] == nums2[j-1] {
 				dp[i][j] = dp[i-1][j] + 1
 			}
 		}
 	}
 	return res
 }
+
+// 输入：nums1 = [1,2,3,2,1], nums2 = [3,2,1,4,7]
+// 输出：3
+// 解释：长度最长的公共子数组是 [3,2,1]
+func findLengthV2(nums1 []int, nums2 []int) int {
+	res := 0
+	dp := make([]int, len(nums1)+1)
+	for i := 1; i <= len(nums1); i++ {
+		for j := 1; j <= len(nums2); j++ {
+			if nums1[i-1] == nums2[j-1] {
+				dp[j] = dp[j-1] + 1
+				res = max(res, dp[j])
+			}
+		}
+	}
+	return res
+}
+i=1
+// dp3 = 1
+i=2
+// dp2= 1
+i=3
+// dp1=1
+i=4
+// dp2 = dp1+1
 
 // 1143.最长公共子序列
 // 输入：text1 = "abcde", text2 = "ace"
