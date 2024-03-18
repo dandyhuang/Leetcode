@@ -22,6 +22,8 @@ func max(a, b int) int {
 // 输出：false
 // 解释："a" 无法匹配 "aa" 整个字符串。
 // 这里*是可以批评多个前面的那个元素，那么就需要考虑.*的情况了， .*是可以匹配任意2个字符串
+
+// 为什么官方题解"shacahe"和".hacah*"的匹配结果是false啊
 func isMatch(s string, p string) bool {
 	m, n := len(s), len(p)
 
