@@ -204,13 +204,37 @@ func maxProfit(prices []int) int {
 	dp[0][0] = -prices[0]
 	dp[0][1] = 0
 	for i := 1; i < len(prices); i++ {
-		dp[i][0] = max(dp[i-1][1]-prices[i], -prices[i])
+		dp[i][0] = max(dp[i-1][0], dp[i-1][1]-prices[i])
 		dp[i][1] = max(dp[i-1][1], dp[i-1][0]+prices[i])
 	}
-	return max(dp[len(prices)-1][0], dp[len(prices)-1][1])
+	return dp[len(prices)-1][1]
+}
+
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
 }
 
 // 二叉树输出最小路径
+
+// 194. 二叉树的最近公共祖先
+func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	l := lowestCommonAncestor(root.Left, p, q)
+	r := lowestCommonAncestor(root.Right, p, q)
+
+	if l == nil && r == nil {
+		return root
+	}
+	if root.Val == q.Val {
+		return q
+	}
+
+}
+
 // 三数之和
 // 最小栈实现
 // 两个链表有没有交点
