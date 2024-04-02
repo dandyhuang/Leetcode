@@ -49,28 +49,7 @@ func subsets(nums []int) [][]int {
 // 输入: [1,2,2]
 // 输出: [ [2], [1], [1,2,2], [2,2], [1,2], [] ]
 func subsetsWithDup(nums []int) [][]int {
-	var res [][]int
-	var arr []int
-	var dfs func(int, []int)
-	dfs = func(start int, arr []int) {
-		tmp := make([]int, len(arr))
-		copy(tmp, arr)
-		res = append(res, tmp)
-		if start >= len(nums) {
-			return
-		}
-		for i := start; i < len(nums); i++ {
-			// i >= 1
-			if i > start && nums[i-1] == nums[i] {
-				continue
-			}
-			arr = append(arr, nums[i])
-			dfs(i+1, arr)
-			arr = arr[:len(arr)-1]
-		}
-	}
-	dfs(0, arr)
-	return res
+
 }
 
 func subsetsWithDupV2(nums []int) [][]int {

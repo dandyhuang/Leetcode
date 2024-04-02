@@ -55,7 +55,7 @@ func isMatch(s string, p string) bool {
 					// * 匹配前一个字符零次或多次，即忽略或重复前一个字符
 					dp[i][j] = dp[i][j-2] || dp[i-1][j]
 				} else {
-					// * 匹配前一个字符零次
+					// * 匹配0次
 					dp[i][j] = dp[i][j-2]
 				}
 			}
@@ -219,5 +219,20 @@ func minDistance(text1 string, text2 string) int {
 // 输出：3
 // 解释：最长公共子序列是 "ace" ，它的长度为 3 。
 func longestCommonSubsequence(text1 string, text2 string) int {
+	m, n := len(text1), len(text2)
+	dp := make([][]int, m+1)
+	for i := range dp {
+		dp[i] = make([]int, n+1)
+	}
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if text1[i-1] == text2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+			}
+		}
+	}
 
+	return dp[m][n]
 }

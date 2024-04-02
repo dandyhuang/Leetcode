@@ -82,30 +82,30 @@ func DeferClosureLoopV1() {
 	}
 }
 func letterCombinations(digits string) []string {
-	m := map[byte]string{
-		'1': "",
-		'2': "abc",
-		'3': "def",
-		'4': "ghi",
-		'5': "jkl",
-		'6': "mno",
-		'7': "pqrs",
-		'8': "tuv",
-		'9': "wxyz",
-	}
+	//m := map[byte]string{
+	//	'1': "",
+	//	'2': "abc",
+	//	'3': "def",
+	//	'4': "ghi",
+	//	'5': "jkl",
+	//	'6': "mno",
+	//	'7': "pqrs",
+	//	'8': "tuv",
+	//	'9': "wxyz",
+	//}
 	var res []string
-	var dfs func(start int, str string)
-	dfs = func(start int, str string) {
-		if len(str) == len(digits) {
-			res = append(res, str)
-			return
-		}
-		for i := 0; i < len(digits); i++ {
-			tmp := m[digits[i]][start]
-			dfs(start+1, str+m[digits[i]][start])
-		}
-	}
-	dfs(0, "")
+	//var dfs func(start int, str string)
+	//dfs = func(start int, str string) {
+	//	if len(str) == len(digits) {
+	//		res = append(res, str)
+	//		return
+	//	}
+	//	for i := 0; i < len(digits); i++ {
+	//		tmp := m[digits[i]][start]
+	//		dfs(start+1, str+m[digits[i]][start])
+	//	}
+	//}
+	//dfs(0, "")
 	return res
 }
 func isNormalIp(s string, start, end int) bool {
@@ -118,18 +118,52 @@ func isNormalIp(s string, start, end int) bool {
 	}
 	return true
 }
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+func maxSubArray(nums []int) int {
+	res := 0
+	sum := 0
+	for i := range nums {
+		sum += nums[i]
+		if sum < 0 {
+			sum = 0
+		}
+		res = max(res, sum)
+	}
+	return res
+}
+func maxSubArrayV2(nums []int) int {
+	res := 0
+	dp := make([]int, len(nums))
+	dp[0] = max(nums[0], 0)
+	for i := 1; i < len(nums); i++ {
+		dp[i] = max(dp[i-1]+nums[i], 0)
+		res = max(res, dp[i])
+	}
+	return res
+}
 func main() {
-	s := "13ewer"
-	fmt.Println(s[1:4])
-	DeferClosureLoopV1()
-	// 创建示例链表: 1 -> 2 -> 3 -> 4
-	// head := &ListNode{Val: 1, Next: &ListNode{Val: 2, Next: &ListNode{Val: 3, Next: &ListNode{Val: 4}}}}
-	// 创建示例链表: 1 -> 2 -> 3 -> 4 -> 5
-	head := &ListNode{Val: 1, Next: &ListNode{Val: 2, Next: &ListNode{Val: 3, Next: &ListNode{Val: 4, Next: &ListNode{Val: 5}}}}}
 
-	// 重新排列链表
-	reorderList(head)
-
-	// 打印结果
-	printList(head)
+	res := maxSubArrayV2([]int{-2, 1, -3, 4, -1, 2, 1, -5, 4})
+	fmt.Println("res:", res)
+	//	//x := 7
+	//	//z:= x / 2.0
+	//fmt.Printf("%v, %v, %v, %v\n", x/2.0, float64(x)/float64(2), x, z)
+	//s := "13ewer"
+	//fmt.Println(s[1:4])
+	//DeferClosureLoopV1()
+	//// 创建示例链表: 1 -> 2 -> 3 -> 4
+	//// head := &ListNode{Val: 1, Next: &ListNode{Val: 2, Next: &ListNode{Val: 3, Next: &ListNode{Val: 4}}}}
+	//// 创建示例链表: 1 -> 2 -> 3 -> 4 -> 5
+	//head := &ListNode{Val: 1, Next: &ListNode{Val: 2, Next: &ListNode{Val: 3, Next: &ListNode{Val: 4, Next: &ListNode{Val: 5}}}}}
+	//
+	//// 重新排列链表
+	//reorderList(head)
+	//
+	//// 打印结果
+	//printList(head)
 }

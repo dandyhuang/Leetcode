@@ -1,8 +1,11 @@
 package 总结归类
 
+import "math"
+
 type Node struct {
 	k, v      int
 	pre, next *Node
+	Children  []*Node
 }
 type LRUCache struct {
 	head, tail *Node
@@ -217,25 +220,112 @@ type TreeNode struct {
 }
 
 // 二叉树输出最小路径
+// LCR 051. 二叉树中的最大路径和
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func maxPathSum(root *TreeNode) int {
+	res := math.MinInt
+	var dfs func(node *TreeNode) int
+	dfs = func(node *TreeNode) int {
+		if node == nil {
+			return 0
+		}
+		l := dfs(node.Left)
+		r := dfs(node.Right)
+		res = max(res, node.Val+l+r)
+		if l > r {
+			return max(l+node.Val, 0)
+		}
+		return max(r+node.Val, 0)
+	}
+	dfs(root)
+	return res
+}
 
 // 194. 二叉树的最近公共祖先
 func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
-	if root == nil {
-		return nil
+	if root == nil || root.Val == q.Val || root.Val == p.Val {
+		return root
 	}
 	l := lowestCommonAncestor(root.Left, p, q)
 	r := lowestCommonAncestor(root.Right, p, q)
 
-	if l == nil && r == nil {
-		return root
+	if l == nil {
+		return r
 	}
-	if root.Val == q.Val {
-		return q
+	if r == nil {
+		return l
 	}
-
+	return root
 }
 
 // 三数之和
 // 最小栈实现
+type MinStack struct {
+	stack    []int
+	minStack []int
+}
+
+/** initialize your data structure here. */
+func Constructor() MinStack {
+	return MinStack{
+		stack:    make([]int, 0),
+		minStack: make([]int, 0),
+	}
+}
+
+func (this *MinStack) Push(x int) {
+	this.stack = append(this.stack, x)
+	if len(this.minStack) == 0 {
+		this.minStack = append(this.minStack, x)
+	} else {
+		top := this.minStack[len(this.minStack)-1]
+		this.minStack = append(this.minStack, min(top, x))
+	}
+}
+
+func (this *MinStack) Pop() {
+	this.stack = this.stack[:len(this.stack)-1]
+	this.minStack = this.minStack[:len(this.minStack)-1]
+}
+
+func (this *MinStack) Top() int {
+	if len(this.stack) > 0 {
+		// 返回主栈的栈顶元素
+		return this.stack[len(this.stack)-1]
+	}
+	return -1
+}
+
+func (this *MinStack) GetMin() int {
+	if len(this.stack) > 0 {
+		return this.minStack[len(this.minStack)-1]
+	}
+	return -1
+}
+
 // 两个链表有没有交点
+
 // 多叉树的最大深度
+func maxDepth(root *Node) int {
+	res := 0
+	var dfs func(root *Node, deep int) int
+	dfs = func(root *Node, deep int) int {
+		if root == nil {
+			return deep
+		}
+		res = max(res, deep)
+		for _, v := range root.Children {
+			dfs(v, deep+1)
+		}
+		return deep
+	}
+	dfs(root, 1)
+	return res
+}
