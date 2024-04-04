@@ -53,6 +53,34 @@ func minPathSum(grid [][]int) int {
 	return dp[m-1][n-1]
 }
 
+// 647. 回文子串
+// 输入：s = "aaa"
+// 输出：6
+// 解释：6个回文子串: "a", "a", "a", "aa", "aa", "aaa"
+func countSubstrings(s string) int {
+	res := 0
+	dp := make([][]bool, len(s))
+	for i := 0; i < len(s); i++ {
+		dp[i] = make([]bool, len(s))
+	}
+	for i := len(s) - 1; i >= 0; i-- {
+		// 因为dp[i][j]的定义，所以j一定是大于等于i的
+		for j := i; j < len(s); j++ {
+			if s[i] == s[j] {
+				// j一定是大于等于i的
+				if j-i <= 1 {
+					res++
+					dp[i][j] = true
+				} else if dp[i+1][j-1] {
+					res++
+					dp[i][j] = true
+				}
+			}
+		}
+	}
+	return res
+}
+
 // 5. 最长回文子串
 // 输入：s = "babad"
 // 输出："bab"

@@ -1,5 +1,10 @@
 package hot100_2
 
+import (
+	"strconv"
+	"strings"
+)
+
 // 20. 有效的括号
 // 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
 // 输入：s = "()[]{}"
@@ -27,10 +32,31 @@ func isValid(s string) bool {
 }
 
 // 394. 字符串解码
-// 输入：s = "3[a]2[bc]"
+// 输入：s = "3[a]2[bc]" | s = "3[a2[c]]"
 // 输出："aaabcbc"
 func decodeString(s string) string {
-	
+	stack := make([]string, 0)
+	num := 0
+	var res string
+	for _, ch := range s {
+		if ch >= '0' && ch <= '9' {
+			num = num*10 + int(ch-'0')
+		} else if ch == '[' {
+			// 数字+前缀 当3的时候，是入3,""进入栈中
+			stack = append(stack, strconv.Itoa(num), res)
+			num = 0
+			res = ""
+		} else if ch == ']' {
+			preRes := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			times, _ := strconv.Atoi(stack[len(stack)-1])
+			stack = stack[:len(stack)-1]
+			res = preRes + strings.Repeat(res, times)
+		} else {
+			res += string(ch)
+		}
+	}
+	return res
 }
 
 // 739. 每日温度

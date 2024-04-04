@@ -28,8 +28,8 @@ func isValid(s string) bool {
 }
 
 // 394. 字符串解码
-// 输入：s = "3[a]2[bc]"
-// 输出："aaabcbc"
+// 输入：s = "3[a]2[bc]" | s = "3[a2[c]]"
+// 输出："aaabcbc" ｜ "accaccacc"
 func decodeString(s string) string {
 	stack := make([]string, 0)
 	num := 0

@@ -55,7 +55,7 @@ func isMatch(s string, p string) bool {
 					// * 匹配前一个字符零次或多次，即忽略或重复前一个字符
 					dp[i][j] = dp[i][j-2] || dp[i-1][j]
 				} else {
-					// * 匹配前一个字符零次
+					// * 匹配0次
 					dp[i][j] = dp[i][j-2]
 				}
 			}

@@ -56,7 +56,19 @@ func mergeArray(nums1 []int, m int, nums2 []int, n int) {
 // 输出：49
 // 解释：图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。
 func maxArea(height []int) int {
+	res := 0
+	l, r := 0, len(height)-1
+	for l < r {
+		w := r - l
+		res = max(res, min(height[l], height[r])*w)
+		if height[l] < height[r] {
+			l++
+		} else {
+			r--
+		}
+	}
 
+	return res
 }
 
 // 15. 三数之和

@@ -53,6 +53,34 @@ func minPathSum(grid [][]int) int {
 	return dp[m-1][n-1]
 }
 
+// 647. 回文子串
+// 输入：s = "aaa"
+// 输出：6
+// 解释：6个回文子串: "a", "a", "a", "aa", "aa", "aaa"
+func countSubstrings(s string) int {
+	res := 0
+	dp := make([][]bool, len(s))
+	for i := 0; i < len(s); i++ {
+		dp[i] = make([]bool, len(s))
+	}
+	for i := len(s) - 1; i >= 0; i-- {
+		// 因为dp[i][j]的定义，所以j一定是大于等于i的
+		for j := i; j < len(s); j++ {
+			if s[i] == s[j] {
+				// j一定是大于等于i的
+				if j-i <= 1 {
+					res++
+					dp[i][j] = true
+				} else if dp[i+1][j-1] {
+					res++
+					dp[i][j] = true
+				}
+			}
+		}
+	}
+	return res
+}
+
 // 5. 最长回文子串
 // 输入：s = "babad"
 // 输出："bab"
@@ -83,33 +111,42 @@ func extend(l, r int, s string) string {
 
 // 动态归纳法
 func longestPalindromeDp(s string) string {
-	n := len(s)
-	// dp[i][j] 子出串i-j是否是回文子串
-	dp := make([][]bool, n)
-	for i := range dp {
-		dp[i] = make([]bool, n)
-	}
-	for i := 0; i < n; i++ {
-		dp[i][i] = true
-	}
 	start := 0
 	maxLen := 0
-	for j := 0; j < n; j++ {
-		for i := 0; i < j; i++ {
-			if s[i] != s[j] {
-				dp[i][j] = false
-			} else {
-				if j-i < 3 {
+	dp := make([][]bool, len(s))
+	for i := 0; i < len(s); i++ {
+		dp[i] = make([]bool, len(s))
+	}
+	for i := len(s) - 1; i >= 0; i-- {
+		// 因为dp[i][j]的定义，所以j一定是大于等于i的
+		for j := i; j < len(s); j++ {
+			if s[i] == s[j] {
+				// j一定是大于等于i的
+				if j-i <= 1 {
+					if j-i > maxLen {
+						maxLen = j - i
+						start = i
+					}
 					dp[i][j] = true
-				} else {
-					dp[i][j] = dp[i+1][j-1]
-					start = i
-					maxLen = j - i + 1
+				} else if dp[i+1][j-1] {
+					if j-i > maxLen {
+						maxLen = j - i
+						start = i
+					}
+					dp[i][j] = true
 				}
 			}
 		}
 	}
-	return s[start : maxLen+1]
+	return s[start : start+maxLen+1]
+}
+
+// 516. 最长回文子序列,不需要连续
+// 输入：s = "bbbab"
+// 输出：4
+// 解释：一个可能的最长回文子序列为 "bbbb" 。
+func longestPalindromeSubseq(s string) int {
+
 }
 
 // 1143.最长公共子序列
