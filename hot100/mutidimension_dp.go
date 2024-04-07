@@ -85,30 +85,6 @@ func countSubstrings(s string) int {
 // 输入：s = "babad"
 // 输出："bab"
 // 解释："aba" 同样是符合题意的答案。
-// 中心扩散法
-func longestPalindrome(s string) string {
-	var res string
-	for i := 0; i < len(s); i++ {
-		// 偶数
-		s1 := extend(i, i, s)
-		s2 := extend(i, i+1, s)
-		if len(res) < len(s1) {
-			res = s1
-		}
-		if len(res) < len(s2) {
-			res = s2
-		}
-	}
-	return res
-}
-func extend(l, r int, s string) string {
-	for l >= 0 && r < len(s) && s[l] == s[r] {
-		l--
-		r++
-	}
-	return s[l+1 : r]
-}
-
 // 动态归纳法
 func longestPalindromeDp(s string) string {
 	start := 0
@@ -141,12 +117,53 @@ func longestPalindromeDp(s string) string {
 	return s[start : start+maxLen+1]
 }
 
+// 中心扩散法
+func longestPalindrome(s string) string {
+	var res string
+	for i := 0; i < len(s); i++ {
+		// 偶数
+		s1 := extend(i, i, s)
+		s2 := extend(i, i+1, s)
+		if len(res) < len(s1) {
+			res = s1
+		}
+		if len(res) < len(s2) {
+			res = s2
+		}
+	}
+	return res
+}
+func extend(l, r int, s string) string {
+	for l >= 0 && r < len(s) && s[l] == s[r] {
+		l--
+		r++
+	}
+	return s[l+1 : r]
+}
+
 // 516. 最长回文子序列,不需要连续
 // 输入：s = "bbbab"
 // 输出：4
 // 解释：一个可能的最长回文子序列为 "bbbb" 。
 func longestPalindromeSubseq(s string) int {
-
+	// 字符串s在[i, j]范围内最长的回文子序列的长度为dp[i][j]。
+	dp := make([][]int, len(s))
+	for i := 0; i < len(s); i++ {
+		dp[i] = make([]int, len(s))
+	}
+	for i := 0; i < len(s); i++ {
+		dp[i][i] = 1
+	}
+	for i := len(s) - 1; i >= 0; i-- {
+		for j := i + 1; j < len(s); j++ {
+			if s[j] == s[i] {
+				dp[i][j] = dp[i+1][j-1] + 2
+			} else {
+				dp[i][j] = max(dp[i+1][j], dp[i][j-1])
+			}
+		}
+	}
+	return dp[0][len(s)-1]
 }
 
 // 1143.最长公共子序列

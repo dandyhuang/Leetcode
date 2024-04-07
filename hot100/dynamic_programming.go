@@ -606,9 +606,9 @@ func isSubsequence(s string, t string) bool {
 // 输入：s = "rabbbit", t = "rabbit"  输出：3
 // 解释：
 // 如下所示, 有 3 种可以从 s 中得到 "rabbit" 的方案。
-// rabbbit
-// rabbbit
-// rabbbit
+// rab bbit
+// rabb bit
+// rabbb it
 func numDistinct(s string, t string) int {
 
 }
