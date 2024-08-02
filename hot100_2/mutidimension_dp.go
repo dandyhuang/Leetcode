@@ -112,6 +112,108 @@ func longestPalindromeDp(s string) string {
 	return s[start : maxLen+1]
 }
 
+// 516. 最长回文子序列,不需要连续
+// 输入：s = "bbbab"
+// 输出：4
+// 解释：一个可能的最长回文子序列为 "bbbb" 。
+func longestPalindromeSubseq(s string) int {
+	dp := make([][]int, len(s)+1)
+	for i := range dp {
+		dp[i] = make([]int, len(s)+1)
+	}
+	for i := 1; i <= len(s); i++ {
+		dp[i][i] = 1
+	}
+
+	for i := len(s); i > 0; i-- {
+		for j := i + 1; j <= len(s); j++ {
+			if s[i-1] == s[j-1] {
+				dp[i][j] = dp[i+1][j-1] + 2
+			} else {
+				dp[i][j] = max(dp[i+1][j], dp[i][j-1])
+			}
+		}
+	}
+	return dp[1][len(s)]
+}
+
+// 5. 最长回文子串
+func longestPalindromeV2(s string) string {
+	// dp[i][j] 子出串i-j是否是回文子串
+	dp := make([][]bool, len(s))
+	for i := range dp {
+		dp[i] = make([]bool, len(s))
+	}
+	start := 0
+	maxLen := 0
+	for i := len(s) - 1; i >= 0; i-- {
+		for j := i; j < len(s); j++ {
+			if s[i] == s[j] {
+				if j-i <= 1 {
+					if j-i > maxLen {
+						maxLen = j - i
+						start = i
+					}
+					dp[i][j] = true
+				} else if dp[i+1][j-1] {
+					dp[i][j] = true
+					if j-i > maxLen {
+						maxLen = j - i
+						start = i
+					}
+				}
+			}
+		}
+	}
+	return s[start : start+maxLen+1]
+}
+
+// 最长公共子序列
+// 输入：text1 = "abcde", text2 = "ace"
+// 输出：3
+// 解释：最长公共子序列是 "ace" ，它的长度为 3 。
+func longestCommonSubsequenceV1(text1 string, text2 string) int {
+	dp := make([][]int, len(text1)+1)
+	for i := range dp {
+		dp[i] = make([]int, len(text2)+1)
+	}
+	for i := 1; i <= len(text1); i++ {
+		for j := 1; j <= len(text2); j++ {
+			if text1[i-1] == text2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+			}
+		}
+	}
+
+	return dp[len(text1)][len(text2)]
+}
+func longestPalindromeV3(s string) string {
+	var res string
+	extend := func(l, r int) string {
+		for {
+			if l < 0 || r >= len(s) || s[l] != s[r] {
+				break
+			}
+			l--
+			r++
+		}
+		return s[l+1 : r]
+	}
+	for i := 0; i < len(s); i++ {
+		s1 := extend(i, i)
+		s2 := extend(i, i+1)
+		if len(res) < len(s1) {
+			res = s1
+		}
+		if len(res) < len(s2) {
+			res = s2
+		}
+	}
+	return res
+}
+
 // 1143.最长公共子序列
 // 输入：text1 = "abcde", text2 = "ace"
 // 输出：3
@@ -165,8 +267,10 @@ func minDistance(text1 string, text2 string) int {
 	for i := 1; i <= n; i++ {
 		for j := 1; j <= m; j++ {
 			if text1[i-1] == text2[j-1] {
+				// 相同的时候
 				dp[i][j] = dp[i-1][j-1]
 			} else {
+				// dp[i-1][j-1]是替换操作，就是相同的时候+1次替换。 因为替换为相同元素后
 				dp[i][j] = min(min(dp[i-1][j], dp[i][j-1]), dp[i-1][j-1]) + 1
 			}
 		}

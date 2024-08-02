@@ -9,7 +9,7 @@ type ListNode struct {
 // 输入：head = [1,2,3,4,5], k = 2
 // 输出：[2,1,4,3,5]
 func reverseKGroup(head *ListNode, k int) *ListNode {
-
+	return nil
 }
 
 // 3. 无重复字符的最长子串

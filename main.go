@@ -147,7 +147,10 @@ func maxSubArrayV2(nums []int) int {
 	return res
 }
 func main() {
-
+	a, err := strconv.Atoi("place")
+	if err != nil {
+		fmt.Println(a, err)
+	}
 	res := maxSubArrayV2([]int{-2, 1, -3, 4, -1, 2, 1, -5, 4})
 	fmt.Println("res:", res)
 	//	//x := 7
