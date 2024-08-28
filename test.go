@@ -2,60 +2,61 @@ package main
 
 import (
 	"fmt"
-	"sort"
+	"math"
 )
 
 // 给定一个数n，如23121，给定一组数字a,如｛2，4，9｝，求a中元素组成的小于n的最大数，如小于23121的最大数为22999
-func main() {
-	var num, m int
-	// 表示有 n 个节点，m 条关系描述
-	fmt.Scan(&num, &m)
-	// realyNum := num
-	arrM := make([]int, 0)
-	for m > 0 {
-		arrM = append(arrM, m%10)
-		m = m / 10
+func main1() {
+	fmt.Println(1^1, 1^1^1, 0^0, 0^0^1)
+}
+func min(x, y int) int {
+	if x < y {
+		return x
 	}
-	sort.Slice(arrM, func(i, j int) bool {
-		return arrM[i] < arrM[j]
-	})
-	fmt.Println(arrM)
-	arrN := make([]int, 0)
-	for num > 0 {
-		arrN = append(arrN, num%10)
-		num = num / 10
-	}
-	fmt.Println(arrN)
-	i := 0
-	j := len(arrN) - 1
-	for i < j {
-		arrN[i], arrN[j] = arrN[j], arrN[i]
-		i++
-		j--
+	return y
+}
+
+func maxScore(grid [][]int) int {
+	ans := math.MinInt
+	m, n := len(grid), len(grid[0])
+	dp := make([][]int, m+1)
+	dp[0] = make([]int, n+1)
+	for j := range dp[0] {
+		dp[0][j] = math.MaxInt
 	}
 
-	fmt.Println("arr:", arrN)
-	lastSmall := false
-	res := 0
-	for i := 0; i < len(arrN); i++ {
-		if !lastSmall {
-			j := 0
-			for ; j < len(arrM); j++ {
-				if arrN[i] > arrM[j] {
-					lastSmall = true
-					break
-				} else if arrM[j] == arrN[i] {
-					break
-				}
-			}
-			if lastSmall {
-				res = res*10 + arrM[j]
-			} else {
-				res = res*10 + arrN[i]
-			}
-		} else {
-			res = res*10 + arrM[len(arrM)-1]
+	for i := 0; i < m; i++ {
+		dp[i+1] = make([]int, n+1)
+		dp[i+1][0] = math.MaxInt
+		for j := 0; j < n; j++ {
+			last := min(dp[i+1][j], dp[i][j+1])
+			ans = max(ans, grid[i][j]-last)
+			dp[i+1][j+1] = min(grid[i][j], last)
 		}
 	}
-	fmt.Println(res)
+	return ans
+}
+
+func maxScore1(grid [][]int) int {
+	m, n := len(grid), len(grid[0])
+	dp := make([][]int, m)
+	for i := range dp {
+		dp[i] = make([]int, n)
+	}
+	res := math.MinInt
+	dp[0][0] = grid[0][0]
+	for i := 1; i < n; i++ {
+		res = max(res, grid[0][i]-dp[0][i-1])
+		dp[0][i] = min(dp[0][i-1], grid[0][i])
+	}
+	for i := 1; i < m; i++ {
+		res = max(res, grid[i][0]-dp[i-1][0])
+		dp[i][0] = min(dp[i-1][0], grid[0][i])
+		for j := 1; j < n; j++ {
+			tmp := min(dp[i-1][j], dp[i][j-1])
+			res = max(res, grid[i][j]-tmp)
+			dp[i][j] = min(tmp, grid[i][j])
+		}
+	}
+	return res
 }
