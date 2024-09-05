@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"sync"
 )
 
 func DeferLoopV20() {
@@ -147,12 +148,26 @@ func maxSubArrayV2(nums []int) int {
 	return res
 }
 func main() {
-	a, err := strconv.Atoi("place")
-	if err != nil {
-		fmt.Println(a, err)
+	var (
+		wg    = &sync.WaitGroup{}
+		count int
+	)
+	wg.Add(100)
+	for i := 1; i <= 100; i++ {
+		go func() {
+			defer wg.Done()
+			count += i
+		}()
 	}
-	res := maxSubArrayV2([]int{-2, 1, -3, 4, -1, 2, 1, -5, 4})
-	fmt.Println("res:", res)
+	wg.Wait()
+	fmt.Println(count)
+
+	//a, err := strconv.Atoi("place")
+	//if err != nil {
+	//	fmt.Println(a, err)
+	//}
+	//res := maxSubArrayV2([]int{-2, 1, -3, 4, -1, 2, 1, -5, 4})
+	//fmt.Println("res:", res)
 	//	//x := 7
 	//	//z:= x / 2.0
 	//fmt.Printf("%v, %v, %v, %v\n", x/2.0, float64(x)/float64(2), x, z)

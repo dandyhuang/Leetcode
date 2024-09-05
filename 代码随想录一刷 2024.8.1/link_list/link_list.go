@@ -175,12 +175,50 @@ func swapPairsRecursion(head *ListNode) *ListNode {
 	next.Next = head
 	return next
 }
+func reverseNode(head *ListNode) *ListNode {
+	var pre *ListNode
+	for head != nil {
+		next := head.Next
+		head.Next = pre
+		pre = head
+		head = next
+	}
+	return pre
+}
 
 // 25. K 个一组翻转链表
-// 输入：head = [1,2,3,4,5], k = 2
-// 输出：[2,1,4,3,5]
+// 输入：head = [1,2,3,4,5], k = 3
+// 输出：[3,2,1,4,5]
 func reverseKGroup(head *ListNode, k int) *ListNode {
+	dummy := &ListNode{Next: head}
+	pre := dummy
+	for head != nil {
+		cur := head
+		preHead := head
+		n := 1
+		for cur != nil && n < k {
+			cur = cur.Next
+			n++
+		}
+		if cur == nil {
+			return dummy.Next
+		}
+		next := cur.Next
+		cur.Next = nil
+		curHead := reverseNode(preHead)
+		pre.Next = curHead
+		pre = head
+		head.Next = next
+		head = next
+	}
+	return dummy.Next
+}
 
+// 1721. 交换链表中的节点
+// 输入：head = [1,2,3,4,5], k = 2
+// 输出：[1,4,3,2,5]
+func swapNodes(head *ListNode, k int) *ListNode {
+	return nil
 }
 
 // 19.删除链表的倒数第N个节点
@@ -212,5 +250,42 @@ func removeNthFromEnd(head *ListNode, n int) *ListNode {
 // 同：160.链表相交
 // 给你两个单链表的头节点 headA 和 headB ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 null 。
 func getIntersectionNode(headA, headB *ListNode) *ListNode {
+	a, b := headA, headB
+	for a != b {
+		if a == nil {
+			a = headB
+		} else {
+			a = a.Next
+		}
+		if b == nil {
+			b = headA
+		} else {
+			b = b.Next
+		}
+	}
+	return a
+}
 
+// 142.环形链表II
+// 题意： 给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
+// 为了表示给定链表中的环，使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。
+// 说明：不允许修改给定的链表。
+func detectCycle(head *ListNode) *ListNode {
+	s, f := head, head
+	for f != nil && f.Next != nil {
+		f = f.Next.Next
+		s = s.Next
+		if s == f {
+			break
+		}
+	}
+	if f == nil || f.Next == nil {
+		return nil
+	}
+	cur := head
+	for cur != s {
+		cur = cur.Next
+		s = s.Next
+	}
+	return cur
 }
